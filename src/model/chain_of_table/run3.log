@@ -1,0 +1,29 @@
+/Users/annebrian/Desktop/lab/chain-of-table-main/wiki_qa/csv/203-csv/224.csv
+Traceback (most recent call last):
+  File "run_tabfact.py", line 95, in <module>
+    fire.Fire(main)
+  File "/Users/annebrian/anaconda3/lib/python3.8/site-packages/fire/core.py", line 143, in Fire
+    component_trace = _Fire(component, args, parsed_flag_args, context, name)
+  File "/Users/annebrian/anaconda3/lib/python3.8/site-packages/fire/core.py", line 477, in _Fire
+    component, remaining_args = _CallAndUpdateTrace(
+  File "/Users/annebrian/anaconda3/lib/python3.8/site-packages/fire/core.py", line 693, in _CallAndUpdateTrace
+    component = fn(*varargs, **kwargs)
+  File "run_tabfact.py", line 38, in main
+    dataset = load_wikiqa_dataset([dataset_path,"/Users/annebrian/Desktop/lab/chain-of-table-main/wiki_qa/test_unseen.csv"], raw2clean_path, first_n=first_n)
+  File "/Users/annebrian/Desktop/lab/chain-of-table-main/utils/load_data.py", line 102, in load_wikiqa_dataset
+    df = pd.read_csv(csvfile,sep=",",quotechar='"')
+  File "/Users/annebrian/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 912, in read_csv
+    return _read(filepath_or_buffer, kwds)
+  File "/Users/annebrian/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 583, in _read
+    return parser.read(nrows)
+  File "/Users/annebrian/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/readers.py", line 1704, in read
+    ) = self._engine.read(  # type: ignore[attr-defined]
+  File "/Users/annebrian/anaconda3/lib/python3.8/site-packages/pandas/io/parsers/c_parser_wrapper.py", line 234, in read
+    chunks = self._reader.read_low_memory(nrows)
+  File "pandas/_libs/parsers.pyx", line 814, in pandas._libs.parsers.TextReader.read_low_memory
+  File "pandas/_libs/parsers.pyx", line 875, in pandas._libs.parsers.TextReader._read_rows
+  File "pandas/_libs/parsers.pyx", line 850, in pandas._libs.parsers.TextReader._tokenize_rows
+  File "pandas/_libs/parsers.pyx", line 861, in pandas._libs.parsers.TextReader._check_tokenize_status
+  File "pandas/_libs/parsers.pyx", line 2029, in pandas._libs.parsers.raise_parser_error
+pandas.errors.ParserError: Error tokenizing data. C error: Expected 6 fields in line 14, saw 8
+

@@ -1,0 +1,52 @@
+from .BaseDataset import *
+
+class PIDataset(BaseDataset):
+    def __init__(self, dataset_name:str, sample_limit=4000):
+        super(PIDataset, self).__init__(dataset_name)
+        
+        self.sample_limit = sample_limit
+        self.tol_data, self.train_data, self.test_data, self.valid_data = [], [], [], []
+        
+    def load_data(self, data_path=None):
+        
+        if data_path == None:
+            data_path = f'{DATA_PATH}/PI/{self.dataset_name}/'
+        else:
+            data_path = f'{data_path}/PI/{self.dataset_name}/'
+        
+        cnts = {
+            1: int(0.6*self.sample_limit),
+            2: int(0.2*self.sample_limit),
+            3: int(0.1*self.sample_limit),
+            4: int(0.06*self.sample_limit),
+            5: int(0.02*self.sample_limit),
+            6: int(0.01*self.sample_limit)
+        }
+        cnts[6] += self.sample_limit - sum(cnts.values())
+
+        for cnt in cnts:
+            sample_num = cnts[cnt]
+            file_num = sample_num // 1000
+            if sample_num % 1000 != 0:
+                file_num += 1
+            
+            loaded_ds = []
+            for i in range(file_num*2):
+                file_name = f'PI_inses_selcnt{cnt}_split{i}.jsonl'
+                ds = load_jsonl(os.path.join(data_path, file_name))
+                for line_id, d in enumerate(ds):
+                    d['table'] = chage_tableidx_to_int(d['table'])
+                    if len(d['table']) > 24 or len(d['table'][1]) > 10:
+                        continue
+                    pi_data = PIData(self.dataset_name, tbl=d['table'], 
+                                        selected_cells=d['selected_cells'], labels=d['position'], task_type='PI', id=f'{file_name}:{line_id}')
+                    loaded_ds.append(pi_data)
+            loaded_ds = loaded_ds[:sample_num]
+            self.tol_data += loaded_ds
+        
+        shuffle(self.tol_data)
+
+        # 随机划分数据集  3：1：1
+        self.train_data = self.tol_data[:int(0.6*self.sample_limit)]
+        self.valid_data = self.tol_data[int(0.6*self.sample_limit):int(0.8*self.sample_limit)]
+        self.test_data = self.tol_data[int(0.8*self.sample_limit):]
