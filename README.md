@@ -2,17 +2,11 @@
 
 ![python](https://img.shields.io/badge/python-3.9.15-blue)
 
-The Multi-Agent Framework for Table Processing (MAFTP) is a sophisticated approach designed to handle and analyze tabular data through the use of multiple agents. Each agent in this framework is specialized to perform specific tasks or operations on table-based data, such as sorting, filtering, identifying patterns, or executing more complex data transformations.
+Tabular Question Answering (TQA) is a critical data analysis task that involves generating answers to user questions based on tabular data. Currently, Code Generation methods based on Large Language Models (LLMs) have achieved state-of-the-art (sota) performance by generating codes to extract the answer from the table for answering question. A primary challenges of these methods is that the tables are usually from websites or spreadsheets, having multiple data quality issues, which we categorize into two types: (1) column incompletion, referring to that the table lacks specific columns for answering the question and (2) inconsistency, representing that the values in the table have inconsistent formats or types. However, the current sota methods often overlook the critical step of data preparation for the data quality issues, which becomes a performance bottleneck for these methods. To address this, we propose a Automatic Data Preparation framework for TQA, which organizes efficient coordination between five LLM-based agents to automate data preparation. We also propose a pseudo code analysis based method to improve the accuracy of generating logical data prep operation. Extensive experiments on WikiTQ and TabFact show that AutoPrep achieve the best performance compared with previous sota methods. Also, when integrated with the data preparation, these methods can obtain significant performance improvement.
 
-![figure](./figs/v3.1.png)
+![figure](./figs/v3.2.png)
 
 ## Quick Start
-
-### Add a costume operator
-
-1. define the operator execute function in `operator_pool.py`
-2. add required args of the operator in `ARG_REQUIRED_DICT`  (add the function string in `OP_FUNC_STRING` if needed)
-3. define the operator class under `/operator`
 
 ### Environment Requirement
 
