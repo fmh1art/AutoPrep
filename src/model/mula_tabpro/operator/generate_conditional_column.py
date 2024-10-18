@@ -18,24 +18,3 @@ class GenConCol(SimpleOperator):
             raise ValueError(f'E(GEN_CON_COL): The target column {new_column} already exists in the table') if PRE_CHECK_GRAMMAR else None
 
         return {'new_column': new_column, 'condition': condition}, op_str
-
-def main():
-
-    table_text = [
-        ['date', 'division', 'league', 'score'],
-        ['2001/01/02', '2', 'usl a-league', '15-26'],
-        ['2002/08/06', '2', 'usl a-league', '12-18'],
-        ['2005/03/24', '2', 'usl first division', '8-15'],
-    ]
-    table = pd.DataFrame(table_text[1:], columns=table_text[0])
-    question = 'how many records are before 2003'
-    data = TQAData(tbl=table, question=question)
-
-    op = GenConCol(llm_model='gpt-3.5-turbo-0613')
-    op.complete_args(data)
-    data = op.execute(data)
-    print(data.tbl)
-            
-if __name__ == '__main__':
-    # main()
-    pass

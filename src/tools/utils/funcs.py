@@ -96,35 +96,6 @@ def save_jsonl(path, datas):
             f.write(json.dumps(d) + '\n')
 
 
-def auto_dataset(dataset_name):
-    tgt_task = None
-    for task in DATASETS:
-        if dataset_name in DATASETS[task]:
-            tgt_task = task
-            break
-    
-    if tgt_task is None:
-        raise ValueError(f"Dataset {dataset_name} not found in any task")
-    
-    if tgt_task == 'SCM':
-        from src.dataset.SCMDataset import SCMDataset
-        return SCMDataset(dataset_name)
-    elif tgt_task == 'CTA':
-        from src.dataset.CTADataset import CTADataset
-        return CTADataset(dataset_name)
-    elif tgt_task == 'DI':
-        from src.dataset.DIDataset import DIDataset
-        return DIDataset(dataset_name)
-    elif tgt_task == 'ED':
-        from src.dataset.EDDataset import EDDataset
-        return EDDataset(dataset_name)
-    elif tgt_task == 'EM':
-        from src.dataset.EMDataset import EMDataset
-        return EMDataset(dataset_name)
-    else:
-        raise ValueError(f"Task {tgt_task} not found")
-
-
 def cal_f1(preds, labs):
     tp = 0
     tn = 0

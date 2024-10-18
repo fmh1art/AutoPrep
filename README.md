@@ -25,11 +25,7 @@ pip install -r requirements.txt
 
 ### Buildup Steps
 
-1. Download the [datasets](https://pan.baidu.com/s/1osqtqDQVOBIQC4sjlnPFEA?pwd=tllm) with token <u>tllm</u> and unzip it to any path.
+1. The dataset we use can be downloaded from [WikiTQ](https://github.com/ppasupat/WikiTableQuestions) and [TabFact](https://github.com/wenhuchen/Table-Fact-Checking)
 2. Modify the `DATA_PATH` in [global_values.py](./src/global_values.py) to the root path of your downloaded datasets.
-3. create a key file named `keys.txt` in the root `./MulA_Tabpro` and put your api keys in it (each key for one line)
+3. create a key file named `keys.txt` in the root and put your api keys in it (each key for one line)
 4. run `python main/experiment.py`.
-
-## Contributing
-
-:heavy_exclamation_mark: Please refer to [Developer Guides](https://matchbench.github.io/md_file/DeveloperGuides.html) when comitting.

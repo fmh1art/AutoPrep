@@ -1,9 +1,7 @@
-# dir 不需要提交的目录
 tmp/history/
 *.pyc
 **/__pycache__
 
-# log 不需要提交的任意包含后缀名为log的文件
 # *.zip
 # *.json
 # *.csv
@@ -15,6 +13,5 @@ tmp/history/
 # *.pkl
 # *.html
 
-# 提出文件名中包含 key 的文件
 # *test.*
 # *keys.*

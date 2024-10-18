@@ -1,6 +1,5 @@
 import sys, random
 from joblib import Parallel, delayed
-sys.path.append(r'E:\fmh\MulA_Tabpro')
 from global_values import *
 
 from src.tools.binder_utils.evaluator import Evaluator

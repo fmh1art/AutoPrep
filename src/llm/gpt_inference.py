@@ -1,6 +1,6 @@
 import os, copy, time
 from openai import OpenAI
-from src.tools.utils import open_json, save_json, cut_cottable_prompt
+from src.tools.utils import open_json, save_json
 from global_values import *
 if OPENAI_BASE_URL is not None:
     os.environ["OPENAI_BASE_URL"] = OPENAI_BASE_URL

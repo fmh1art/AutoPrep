@@ -84,8 +84,6 @@ class Agent(object):
     
     def get_icl_inses(self, out, key=None):
         tmp_ins = copy.deepcopy(self.cur_ins)
-        if tmp_ins is None:
-            self.logger.log_message(msg='@@@@@@@@@@@@@@@@@@ Current instance is None')
         tmp_ins.key = copy.deepcopy(tmp_ins.q) if key is None else key
         tmp_ins.last_err = copy.deepcopy(self.last_log)
         tmp_ins.a = copy.deepcopy(out)

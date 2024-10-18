@@ -6,7 +6,6 @@ from global_values import TYPE_DEDUCE_RATIO, DEFAULT_ROW_CUT
 from .funcs import cal_tokens
 
 def df_to_cotable(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT):
-        # 将dataframe转换为 col1 | col2 | col3 \n ---|---|--- \n val11 | val12 | val13 \n val21 | val22 | val23
         ret = ""
         col_str = ' | '.join(df.columns) + '\n'
         ret += col_str
@@ -22,7 +21,6 @@ def df_to_cotable(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT):
         return ret.strip()
 
 def df_to_cotable_add_quo(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT):
-        # 将dataframe转换为 col1 | col2 | col3 \n ---|---|--- \n val11 | val12 | val13 \n val21 | val22 | val23
         ret = ""
         col_str = ' | '.join(df.columns) + '\n'
         ret += col_str
@@ -31,17 +29,11 @@ def df_to_cotable_add_quo(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT):
             if cut_line!=-1 and i > cut_line-1:
                 ret += '......\n'
                 break
-            # row_str = ' | '.join([str(x) for x in df.iloc[i].values]) + '\n'
             row_str = ' | '.join([f'"{str(x)}"' if type(x) == str else str(x) for x in df.iloc[i].values]) + '\n'
             ret += row_str
 
         return ret.strip()
         
-        # # 得到所有列名
-        # col_str = ', '.join([f'"{col}"' for col in df.columns])
-        # col_str = 'Current columns are: ' + col_str
-
-        # return ret.strip() + '\n' + col_str
 
 def df_to_json_dict(data:dict):
     ret = ''
@@ -84,12 +76,9 @@ def df_to_str_columns(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, exclude_cols
     return ret.strip()
 
 def df_to_cotable_old(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, row_flag='row'):
-    # 将dataframe转换为 col: col1 | col2 | col3 \n row1: val11 | val12 | val13 \n row2: val21 | val22 | val23
     ret = ""
     col_str = f'col : ' + ' | '.join(df.columns) + '\n'
     ret += col_str
-    # add '|---|
-    # ret += '---|' + '|'.join(['---' for _ in range(len(df.columns))]) + '\n'
     for i in range(len(df)):
         if cut_line!=-1 and i > cut_line-1:
             ret += '......\n'
@@ -99,11 +88,6 @@ def df_to_cotable_old(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, row_flag='ro
 
     return ret.strip()
     
-    # # 得到所有列名
-    # col_str = ', '.join([f'"{col}"' for col in df.columns])
-    # col_str = 'Current columns are: ' + col_str
-
-    # return ret.strip() + '\n' + col_str
 
 def cut_cottable_prompt(prompt, max_tok = 4096):
     lines = prompt.split('\n')
@@ -119,9 +103,7 @@ def cut_cottable_prompt(prompt, max_tok = 4096):
     need_to_space = cur_tok - max_tok
     mid_index = (last_beg + last_end) // 2
     for del_line_cnt in range(1, mid_index - last_beg):
-        # try to delete line from mid_index-del_line_cnt to mid_index+del_line_cnt
         del_lines = lines[mid_index-del_line_cnt:mid_index+del_line_cnt]
-        # get the tokens of the deleted lines
         del_tok = cal_tokens('\n'.join(del_lines))
         if del_tok >= need_to_space:
             break
