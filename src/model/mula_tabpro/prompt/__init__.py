@@ -19,3 +19,5 @@ from .coltype_deducer_prompt import *
 from .imputater_prompt import *
 from .cleaner_prompt import *
 from .view_generator_prompt import *
+
+from .coder_prompt import *

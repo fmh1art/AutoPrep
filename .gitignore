@@ -1,5 +1,5 @@
 # dir 不需要提交的目录
-tmp/
+tmp/history/
 *.pyc
 **/__pycache__
 

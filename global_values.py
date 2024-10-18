@@ -2,7 +2,7 @@ import os
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
-SAVE_STEP = 3000
+SAVE_STEP = 4000
 
 CURRENT_YEAR = '2024'
 DATASET_YEAR = '2014'
@@ -11,8 +11,8 @@ TYPE_DEDUCE_RATIO = 0.8
 DATE_RATIO_ERR = 0.5
 
 DEFAULT_ROW_CUT = 22
-MAX_INPUT_LIMIT = 8192-200
-MAX_OUTPUT_LIMIT = 4000
+MAX_INPUT_LIMIT = 4096-200
+MAX_OUTPUT_LIMIT = 512
 
 DATE_SYMBOLS_SORT = 'YymbBd'
 TIME_SYMBOLS_SORT = 'pHIMSfaA'
@@ -194,72 +194,21 @@ ALL_KEY_WORDS = CLAUSE_KEYWORDS + JOIN_KEYWORDS + WHERE_OPS + UNIT_OPS + AGG_OPS
 KEPT_WHERE_OP = ('not', 'in', 'exists')
 COND_OPS = ('and', 'or')
 
-OP_STRING2CLASS = {
-    NAMES['INIT']: "InitOP",
+PRE_CHECK_GRAMMAR = True
+OP_INSTEAD_OF_CODE = True
 
-    NAMES['EXT_COL']: "ExtCol",
-    NAMES['EXT_ROW']: "ExtRow",
-    NAMES['EXT_MAX_CONS_RECORD']: "ExtMaxConsRecord",
-
-    NAMES['SORT_BY']: "SortBy",
-    NAMES['GROUP_STATISTICS']: "GroupStatistics",
-
-    NAMES['GEN_NEW_COL']: "GenNewCol",
-    NAMES['GEN_CON_COL']: "GenConCol",
-
-    NAMES['END']: "EndOP",
-    NAMES['STAND_DATETIME']: 'StandDatetime',
-    NAMES['REMOVE_SYMBOL']: 'RemoveSymbol',
-    NAMES['REMOVE_UNIT']: 'RemoveUnit',
-    NAMES['STAND_NUMERICAL']: 'StandNumerical',
-}
-
-AGENT_STRING2CLASS = {
-    "simple_agent": "SimpleAgent",
-    "cleaner": "Cleaner",
-    "view_generator": "ViewGenerator",
-    "nl2sqler": "NL2SQLer",
-}
-
-OP2AGENT = {
-    # NAMES['ADD_COL_BY_CALCULATING']: "synthesizer",
-    # NAMES['ADD_COL_BY_TRANSFORMING']: "synthesizer",
-    # NAMES['SELECT_COL']: "extractor",
-    # NAMES['SELECT_ROW']: "extractor",
-    # NAMES['COUNT_BY']: "analyzer",
-    # NAMES['SORT_BY']: "analyzer",
-}
-
-NEXT_AGENT_DICT = {
-    "INIT": ["cleaner", "view_generator", "nl2sqler"],
-    "cleaner": ["view_generator", "nl2sqler"],
-    "view_generator": ["cleaner", "nl2sqler"],
-}
-
-AGENT_NAME2LARGE_NAME = {
-    "INIT": "INIT", 
-    "analyzer": "Analyzer",
-    "answer_generator": "AnswerGenerator",
-    "cleaner": "Cleaner",
-    "view_generator": "ViewGenerator",
-    "nl2sqler": "NL2SQLer",
-}
-
-TASK_TYPE = 'tableqa'
-# TASK_TYPE = 'tablefact'
+# TASK_TYPE = 'tableqa'
+TASK_TYPE = 'tablefact'
 
 SPLIT = 'test'
-INS_LOAD_FROM = None
-# INS_LOAD_FROM = f'correct_instances-{TASK_TYPE}'
 
 MEMORY_RETREIVE_FUNC = 'LEVEN_RATION'
-# MEMORY_RETREIVE_FUNC = 'SBERT_EMB_SIM'
 
-SELF_CORRECTION = False
+SELF_CORRECTION = True
 SELF_CORRECTION_NUM = 1 if SELF_CORRECTION else 0
 
 RETRIEVE_DEMO = False
-RETRIEVE_DEMO_NUM = 1 if RETRIEVE_DEMO else 0
+RETRIEVE_DEMO_NUM = 20 if RETRIEVE_DEMO else 0
 
 AGENTS = ['nl2sqler', 'view_generator', 'cleaner', 'coltype_deducer', 'binder', 'imputater']
 # LLM_NAME = 'gpt-3.5-turbo-0613'
@@ -275,14 +224,11 @@ DEMO_MODE = {
 }
 
 EXT_REL_COL = True
-BASE_STAND = False
 
-DATA_PATH = r'E:\fmh\data'
-PROJ_PATH = r'E:\fmh\MulA_Tabpro'
-# DATA_PATH = r'D:\1th-D\Firefly\RAG_LLM_DM\data'
-# PROJ_PATH = r'D:\0th-D\MulA_Tabpro'
+DATA_PATH = r'E:\data'
+PROJ_PATH = r'E:\MulA_Tabpro'
 
-TABLELLM_VERSION = f'3.11-{TASK_TYPE}-{LLM_NAME}-selfc{SELF_CORRECTION_NUM}-retd{RETRIEVE_DEMO_NUM}-{MEMORY_RETREIVE_FUNC[:5]}-RetDFirst'
+TABLELLM_VERSION = f'4.5-{TASK_TYPE}-{LLM_NAME.split("-")[0]}-selfc{SELF_CORRECTION_NUM}-retd{RETRIEVE_DEMO_NUM}-PreCheck{PRE_CHECK_GRAMMAR}-OP{OP_INSTEAD_OF_CODE}'
 
 MULTIA_TEMP_DATA_PATH = f'tmp/mul-dp_temp_data_v{TABLELLM_VERSION}.pkl'
 
@@ -291,9 +237,6 @@ cut_log = False
 
 # KEY_FILE = 'keys.txt'
 # OPENAI_BASE_URL = None
-
-# KEY_FILE = 'keys_CHN.txt'
-# OPENAI_BASE_URL = "https://35.aigcbest.top/v1"
 
 KEY_FILE = 'keys_deepseek.txt'
 OPENAI_BASE_URL = "https://api.deepseek.com"

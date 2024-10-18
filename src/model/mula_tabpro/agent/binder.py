@@ -127,12 +127,14 @@ class Binder(Agent):
                     )
                      for ins in ret_ins
                 ]
+
+                demo = '\n\n'.join(added_demos)
                 
                 # demo = demo + '\n\n' + '\n\n'.join(added_demos)
 
-                demo_lis = demo.split('\n\n')
-                demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                demo = '\n\n'.join(demo_lis)
+                # demo_lis = demo.split('\n\n')
+                # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
+                # demo = '\n\n'.join(demo_lis)
 
                 demo = demo.strip()
 
@@ -159,11 +161,13 @@ class Binder(Agent):
                                         context=ins.context, question=ins.q, 
                                         last_error=ins.last_err, a=ins.a) for ins in ret_ins]
                     
+                    demo = '\n\n'.join(added_demos)
+                    
                     # demo = demo + '\n\n' + '\n\n'.join(added_demos)
 
-                    demo_lis = demo.split('\n\n')
-                    demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                    demo = '\n\n'.join(demo_lis)
+                    # demo_lis = demo.split('\n\n')
+                    # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
+                    # demo = '\n\n'.join(demo_lis)
                     
                     demo = demo.strip()
 

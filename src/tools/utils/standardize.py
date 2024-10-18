@@ -327,7 +327,7 @@ def _base_clean_values(df: pd.DataFrame):
     return df
 
 
-def base_clean_dataframe(df: pd.DataFrame, colname_cleaning=True, value_cleaning=True, value_standardization=True):
+def base_clean_dataframe(df: pd.DataFrame, colname_cleaning=True, value_cleaning=True, value_standardization=False):
     if colname_cleaning:
         # column name cleaning
         df = _base_clean_columns(df)

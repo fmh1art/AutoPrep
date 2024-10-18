@@ -25,17 +25,17 @@ class StandNumerical(SimpleOperator):
 
     def _parse_args(self, data: TQAData, output: str):
         op_str = parse_any_string(output, code_type='operator_with_args').strip()
-        if not op_str.startswith(self.type):
+        if PRE_CHECK_GRAMMAR and not op_str.startswith(self.type):
             raise ValueError(f'E({self.type}): Function name not found in the output')
         
         try:
             column, func = parse_two_args(op_str, 'column', 'func', data.tbl)
         except:
-            raise ValueError(f'E({self.type}): Error in parsing the operator: {op_str}')
+            raise ValueError(f'E({self.type}): Error in parsing the operator: {op_str}') if PRE_CHECK_GRAMMAR else None
         
         try:
             eval(func)
         except:
-            raise ValueError(f'E({self.type}): Error in parsing the lambda function: {func}. The lambda function is not valid')
+            raise ValueError(f'E({self.type}): Error in parsing the lambda function: {func}. The lambda function is not valid') if PRE_CHECK_GRAMMAR else None
         
         return {'column': column, 'func': func}, op_str

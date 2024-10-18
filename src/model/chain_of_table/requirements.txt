@@ -1,5 +1,0 @@
-fire
-numpy
-pandas
-tqdm
-openai==0.28.1

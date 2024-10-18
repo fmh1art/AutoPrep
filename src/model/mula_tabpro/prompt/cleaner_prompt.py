@@ -115,6 +115,15 @@ Operator: ```{NAMES['STAND_NUMERICAL']}(df, score='date', func=lambda x: int(x.r
 Requirement: please standardize the column `notes` to numerical format.
 Operator: ```{NAMES['STAND_NUMERICAL']}(df, column='notes', func=lambda x: int(re.search(r'\d+ ', x).group() if 'episodes' in x else 1 if 'episode' in x else '[n.a.]'))```""",
 
+    # query for total standardize
+    f"tol_standardize_query": """Given the column and the requirement, please use the operator `{op1}` or `{op2}` to standardize the column to the required format.
+/*
+{cot_tbl}
+*/
+Requirement: {req}.
+Output ```operator_with_args``` with NO other texts.
+Operator:""",
+    
     # standarize query
     f"standardize_query": """Given the column and the requirement, please use the operator `{op_name}` to standardize the column to the required format.
 

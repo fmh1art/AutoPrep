@@ -38,11 +38,13 @@ class ViewGenerator(SimpleAgent):
                     for ins in ret_ins
                 ]
 
+                op_demo = '\n\n'.join(added_demos)
                     
                 # op_demo = op_demo + '\n\n' + '\n\n'.join(added_demos)
-                demo_lis = op_demo.split('\n\n')
-                demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                op_demo = '\n\n'.join(demo_lis)
+
+                # demo_lis = op_demo.split('\n\n')
+                # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
+                # op_demo = '\n\n'.join(demo_lis)
 
                 op_demo = op_demo.strip()
 
@@ -64,10 +66,13 @@ class ViewGenerator(SimpleAgent):
                                         context=ins.context, question=ins.q, 
                                         last_error=ins.last_err, a=ins.a) for ins in ret_ins]
                     
+                    op_demo = '\n\n'.join(added_demos)
+
                     # op_demo = op_demo + '\n\n' + '\n\n'.join(added_demos)
-                    demo_lis = op_demo.split('\n\n')
-                    demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                    op_demo = '\n\n'.join(demo_lis)
+
+                    # demo_lis = op_demo.split('\n\n')
+                    # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
+                    # op_demo = '\n\n'.join(demo_lis)
 
                     op_demo = op_demo.strip()
                 
@@ -117,6 +122,9 @@ class ViewGenerator(SimpleAgent):
                 self.get_self_corr_inses(out)
             )
             self.last_log = None
+            self.logger.log_message(msg=f'---- ID: {data.id}, SUCCESSFULLY DEBUG IN {self.err_raise_cnt} times! ----')
+        else:
+            self.logger.log_message(msg=f'---- ID: {data.id}, NO BUGS! ----')
 
         table_tmp = df_to_str_columns_add_quo(df=data.tbl, exclude_cols=[c for c in data.tbl.columns if c not in cols], cut_line=5)
         self.icl_inses.append(

@@ -11,6 +11,7 @@ class NL2SQLer(Agent):
         self.self_corr_inses = []
         self.icl_inses = []
         self.err_raise_cnt = 0
+        self.sql, self.ans = 'INIT', 'INIT'
 
         data.tbl = add_row_number_to_df(data.tbl, col_name='row_id')
         data = update_TData_col_type(data, col_type={'row_id': 'numerical'})
@@ -20,10 +21,8 @@ class NL2SQLer(Agent):
             out = self.gpt.query(prompt)
             self.logger.log_message(line_limit=cut_log, level='debug', msg='Prompt: ' + prompt)
             self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Output: {out}')
-
-            sql = parse_any_string(out, hard_replace='SQL:')
-
             try:
+                sql = parse_any_string(out, hard_replace='SQL:')
                 sql, _ = post_process_sql(sql, data.tbl, data.title)
                 ans = self.exe_sql(sql, data)
                 self.logger.log_message(line_limit=cut_log, level='debug', msg=f'tbl: {df_to_cotable(ans)}')
@@ -68,7 +67,6 @@ class NL2SQLer(Agent):
             query = QUERY_NL2SQLER.format(create_table_text=create_table, table=table_ret, question=question, title=title)
 
             if self.retrieve_demo and instance_pool is not None:
-                query = query.replace('SQL:', 'Last Error: ' + self.last_log + '\n' + 'SQL:')
                 create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
                 ret_ins = instance_pool.retrieve(
                     get_instance(id = data.id,
@@ -88,15 +86,19 @@ class NL2SQLer(Agent):
                     )
                      for ins in ret_ins
                 ]
+
+                demo = '\n\n'.join(added_demos)
+
                 # demo = demo + '\n\n' + '\n\n'.join(added_demos)
 
-                demo_lis = demo.split('\n\n')
-                demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                demo = '\n\n'.join(demo_lis)
+                # demo_lis = demo.split('\n\n')
+                # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
+                # demo = '\n\n'.join(demo_lis)
 
                 demo = demo.strip()
 
             if self.self_correction and self.last_log is not None:
+                query = query.replace('SQL:', 'Last Error: ' + self.last_log + '\n' + 'SQL:')
 
                 if instance_pool is not None:
                     create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
@@ -116,11 +118,13 @@ class NL2SQLer(Agent):
                                         context=ins.context, question=ins.q, 
                                         last_error=ins.last_err, a=ins.a) for ins in ret_ins]
                     
+                    demo = '\n\n'.join(added_demos)
+
                     # demo = demo + '\n\n' + '\n\n'.join(added_demos)
 
-                    demo_lis = demo.split('\n\n')
-                    demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                    demo = '\n\n'.join(demo_lis)
+                    # demo_lis = demo.split('\n\n')
+                    # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
+                    # demo = '\n\n'.join(demo_lis)
 
                     demo = demo.strip()
 

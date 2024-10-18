@@ -4,13 +4,15 @@ from typing import List
 from Levenshtein import ratio
 import numpy as np
 
-from global_values import MEMORY_RETREIVE_FUNC
+from global_values import MEMORY_RETREIVE_FUNC, TABLELLM_VERSION
+from src.tools.logger import Logger
 
 class TextSimRetriever:
-    def __init__(self, texts:List[str], ids, sim_func=MEMORY_RETREIVE_FUNC, type=None):
+    def __init__(self, texts:List[str], ids, sim_func=MEMORY_RETREIVE_FUNC, type=None,):
         self.texts = texts
         self.ids = ids
         self.sim_func = sim_func
+        self.logger = Logger(name=type, root=f'tmp/table_llm_log/mula_tabpro_v{TABLELLM_VERSION}/retriever', log_file=f'{type}.log')
         if self.sim_func == 'SBERT_EMB_SIM':
             from sentence_transformers import SentenceTransformer
             self.encoder = SentenceTransformer('sentence-transformers/bert-base-nli-mean-tokens')
@@ -28,15 +30,24 @@ class TextSimRetriever:
     
     def retrieve(self, query, topk=1):
         if self.sim_func == 'LEVEN_RATION':
-            return self.retrieve_ratio(query, topk)
+            ret = self.retrieve_ratio(query, topk)
         elif self.sim_func == 'SBERT_EMB_SIM':
-            return self.retrieve_sbert_emb_sim(query, topk)
-    
+            ret = self.retrieve_sbert_emb_sim(query, topk)
+
+        ret_text = '\n---------------------------------\n'.join([self.texts[i] for i in ret])
+        self.logger.log_message(msg=f'\n\n*************************【query】*************************\n\n{query}\n\n*************************【retrieved】*************************\n\n{ret_text}\n\n')
+
+        return ret
+
     def retrieve_ratio(self, query, topk=1):
         # return the index(not ids) of most similar text
         scores = [ratio(query, text) for text in self.texts]
         topk = min(topk, len(scores))
-        topk_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:topk]
+        
+        topk_similarities = sorted(set(scores), reverse=True)[:topk]
+        topk_indices = [i for i, score in enumerate(scores) if score in topk_similarities]
+
+        # topk_indices = sorted(range(len(scores)), key=lambda i: scores[i], reverse=True)[:topk]
 
         return topk_indices
     

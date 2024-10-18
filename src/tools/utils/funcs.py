@@ -166,6 +166,14 @@ def save_json(a, fn):
     f2.write(b)
     f2.close()
 
+def execute_code_from_string(code_string, df, glo = globals(), loc = locals()):
+    try:
+        loc['df'] = df
+        exec(code_string, glo, loc)
+        return locals()['df']
+    except Exception as e:
+        raise ValueError(f"Error executing code: {e}")
+
 def load_tsv(file_path):
     data = []
     with open(file_path, 'r', encoding='utf-8') as f:

@@ -8,15 +8,10 @@ class StandDatetime(SimpleOperator):
         df = copy.deepcopy(data.tbl)
         col = self.args.get('column')
         date_rat = date_ratio(df, col)
-        
-        # if date_rat < 0.1:
-        #     raise ValueError(f'E({self.type}): Column {col} is not a datetime column!')
-        # if date_rat < DATE_RATIO_ERR:
-        #     raise ValueError(f'E({self.type}): Date ratio is too low: {date_rat}')
 
         table = eval(self.complete_func_str)
 
-        if type(table) != type(pd.DataFrame()):
+        if PRE_CHECK_GRAMMAR and type(table) != type(pd.DataFrame()):
             raise ValueError(f'E({self.type}): Not pd.Dataframe')
         
         data.tbl = table
@@ -26,12 +21,12 @@ class StandDatetime(SimpleOperator):
 
     def _parse_args(self, data: TQAData, output: str):
         op_str = parse_any_string(output, code_type='operator_with_args').strip()
-        if not op_str.startswith(self.type):
+        if PRE_CHECK_GRAMMAR and not op_str.startswith(self.type):
             raise ValueError(f'E({self.type}): Function name not found in the output')
         
         try:
             column, format = parse_two_args(op_str, 'column', 'format', data.tbl)
         except:
-            raise ValueError(f'E(GEN_NEW_COL): Error in parsing function: {op_str}')
+            raise ValueError(f'E(GEN_NEW_COL): Error in parsing function: {op_str}') if PRE_CHECK_GRAMMAR else None
         
         return {'column': column, 'format': format}, op_str

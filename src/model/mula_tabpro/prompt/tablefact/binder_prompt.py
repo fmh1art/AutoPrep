@@ -176,4 +176,4 @@ NeuralSQL:"""
 SELF_CORREC_INS_BINDER = """{context}
 Q: {question}
 Last Error: {last_error}
-NeuralSQL: {a}"""
+NeuralSQL: ```{a}```"""

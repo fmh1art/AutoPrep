@@ -6,3 +6,4 @@ from .coltype_deducer import ColTypeDeducer
 from .imputater import Imputater
 from .end2ender import End2Ender
 from .cot_end2ender import CoTEnd2Ender
+from .coder import Coder

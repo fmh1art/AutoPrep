@@ -6,16 +6,16 @@ class GenConCol(SimpleOperator):
 
     def _parse_args(self, data: TQAData, output: str):
         op_str = parse_any_string(output).strip()
-        if not op_str.startswith(self.type):
+        if PRE_CHECK_GRAMMAR and not op_str.startswith(self.type):
             raise ValueError(f'E({self.type}): Function name not found in the output')
         
         try:
             new_column, condition = parse_two_args(op_str, 'new_column', 'condition', data.tbl)
         except:
-            raise ValueError(f'E(GEN_CON_COL): Error in parsing function: {op_str}')
+            raise ValueError(f'E(GEN_CON_COL): Error in parsing function: {op_str}') if PRE_CHECK_GRAMMAR else None
         
         if new_column in data.tbl.columns:
-            raise ValueError(f'E(GEN_CON_COL): The target column {new_column} already exists in the table')
+            raise ValueError(f'E(GEN_CON_COL): The target column {new_column} already exists in the table') if PRE_CHECK_GRAMMAR else None
 
         return {'new_column': new_column, 'condition': condition}, op_str
 

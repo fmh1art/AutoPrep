@@ -38,7 +38,7 @@ class GenNewCol(SimpleOperator):
         try:
             new_column, func = parse_two_args(op_str, 'new_column', 'func', data.tbl)
         except:
-            raise ValueError(f'E(GEN_NEW_COL): Error in parsing function: {op_str}')
+            raise ValueError(f'E(GEN_NEW_COL): Error in parsing function: {op_str}') if PRE_CHECK_GRAMMAR else None
         
         source_cols = self._get_related_cols(func)
         source_cols = list(set(source_cols))
@@ -49,9 +49,9 @@ class GenNewCol(SimpleOperator):
         try:
             eval(func)
         except:
-            raise ValueError(f'E({self.type}): Error in parsing the lambda function: {func}. The lambda function is not valid')
+            raise ValueError(f'E({self.type}): Error in parsing the lambda function: {func}. The lambda function is not valid') if PRE_CHECK_GRAMMAR else None
         
-        if new_column in data.tbl.columns:
+        if PRE_CHECK_GRAMMAR and new_column in data.tbl.columns:
             raise ValueError(f'E({self.type}): The target column {new_column} already exists in the table')
         
         return {'new_column': new_column, 'func': func, 'source_cols': source_cols}, op_str

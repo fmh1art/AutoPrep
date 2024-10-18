@@ -6,7 +6,7 @@ from src.tools.utils import *
 from global_values import *
 from src.tools.logger import Logger
 from src.data import TQAData
-from src.model.mula_tabpro.agent import Binder, ViewGenerator, Imputater, ColTypeDeducer, Cleaner
+from src.model.mula_tabpro.agent import Binder, ViewGenerator, Imputater, ColTypeDeducer, Cleaner, Coder
 
 class MultiAgentDataPrep:
     def __init__(self, llm_name:str, logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{TABLELLM_VERSION}.log', temp_data_path = MULTIA_TEMP_DATA_PATH):
@@ -17,6 +17,8 @@ class MultiAgentDataPrep:
         self.coltype_deducer = ColTypeDeducer(llm_name=LLM_DICT['coltype_deducer'], logger_root=logger_root, logger_file=logger_file)
         self.cleaner = Cleaner(llm_name=LLM_DICT['cleaner'], logger_root=logger_root, logger_file=logger_file)
         self.logger = Logger(name='MultiAgentDataPrep', root=logger_root, log_file=logger_file)
+        self.coder = Coder(llm_name=LLM_DICT['cleaner'], logger_root=logger_root, logger_file=logger_file)
+
         self.temp_data_path = temp_data_path
         self.self_corr_inses = []
         self.icl_inses = []
@@ -80,25 +82,97 @@ class MultiAgentDataPrep:
     
     def _get_requires_with_direct_prompting(data: TQAData):
         pass
-
     
-    def process_direct_prompting(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True):
+    def process_process_table_with_code(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
         self.data = data
         self.log_info = {}
         self.self_corr_inses = []
-        # 0. base_cleaning 
-        self.data.tbl,_ = base_clean_dataframe(self.data.tbl, value_standardization=BASE_STAND)
+        # 0. base_cleaning
+        self.data.tbl,_ = base_clean_dataframe(self.data.tbl)
+            
         origin_cols = list(self.data.tbl.columns)
 
-        # 1. direct prompting and get the requirements
-        related_columns, aug_requires, nor_requires = self._get_requires_with_direct_prompting(data=data)
+        # 1. get the binder program: extract the [related columns] and the [mapping requirement(s)]
+        related_columns, mapping_requirements, binder_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, binder_vote_cnt=binder_vote_cnt)
+        related_columns = sorted([x for x in related_columns if x in origin_cols], key=lambda x: origin_cols.index(x))
+        self.log_info['relcol_mapreq_bindersql'] = {'related_columns': related_columns, 'mapping_requirements': mapping_requirements, 'binder_sqls': binder_sqls}
+        self.logger.log_message(msg=f'/*************** {self.log_info["relcol_mapreq_bindersql"]} ***************/')
+        self.log_info['related_columns'] = related_columns
+
+        # -- [G] update related_columns if some columns only exist in the mapping requirements
+        # -- update log_info
+        self.log_info['binder_sql'] = binder_sqls
+        self.log_info['mapping_requirements'] = mapping_requirements
+
+        self.log_info[f'col_gen'] = []
+        # 2. [G] generate new columns
+        if GEN_COL_FLAG: #!
+            for requirement, cols in mapping_requirements:
+                try:
+                    old_df = copy.deepcopy(data.tbl) #!
+                    col_str = ', '.join([f'`{col}`' for col in cols])
+                    arg_req = f'Given the column {col_str} please generate a new column to answer "{requirement}"'
+                    self.data = self.coder.process(self.data, arg_req, cols)
+                    new_df = copy.deepcopy(data.tbl) #!
+                    new_col_name = []
+                    for col in new_df.columns: #!
+                        if col not in old_df.columns:
+                            new_col_name.append(col)
+
+                    related_columns = related_columns + new_col_name
+
+                except Exception as e:
+                    self.logger.log_message(level='error', msg=f'E: Error raised in generating column: {e}')
+                    # continue
+                    
+                self.log_info[f'col_gen'].append({'requirement': requirement, 'cols': cols, 'code': self.coder.code})
+        
+        self.log_info['clean'] = []
+        
+        if CLEAN_FLAG: #!
+            # 3. [C] standardize the columns
+            # -> 3.1. [C] deduce the types of all related columns
+            coltype_dict = self._get_coltype_dict(self.data, related_columns, binder_sqls[-1], coltype_vote, instance_pool)
+
+            # -- [C] update log_info
+            self.log_info['coltype_dict'] = coltype_dict
+
+            self.log_info['standardize'] = []
+            for col, ctype in coltype_dict.items():
+                if ctype in ['datetime', 'numerical']:
+                    try:
+                        old_df = copy.deepcopy(data.tbl) #!
+                        arg_req = f'please standardize the column `{col}` to {ctype} format.'
+                        self.data = self.coder.process(self.data, arg_req, [col])
+                        new_df = copy.deepcopy(data.tbl) #!
+                        new_col_name = []
+                        for col in new_df.columns: #!
+                            if col not in old_df.columns:
+                                new_col_name.append(col)
+                                
+                        related_columns = related_columns + new_col_name
+
+                    except Exception as e:
+                        self.logger.log_message(level='error', msg=f'E: Error raised in standardizing column: {e}')
+                        # continue
+                    
+                    self.log_info['standardize'].append({'col': col, 'ctype': ctype, 'code': self.coder.code})
+
+
+        self.log_info['related_columns'] = related_columns
+        # 4. return the processed data
+        if len(related_columns) != 0 and EXT_REL_COL:
+            self.data.tbl = self.data.tbl[related_columns]
+
+        return self.data, self.log_info
+    
 
     def process(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
         self.data = data
         self.log_info = {}
         self.self_corr_inses = []
         # 0. base_cleaning
-        self.data.tbl,_ = base_clean_dataframe(self.data.tbl, value_standardization=BASE_STAND)
+        self.data.tbl,_ = base_clean_dataframe(self.data.tbl)
             
         origin_cols = list(self.data.tbl.columns)
 
