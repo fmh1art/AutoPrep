@@ -1,6 +1,6 @@
 import sys, random
 from joblib import Parallel, delayed
-from global_values import *
+import global_values as GV
 
 from src.tools.binder_utils.evaluator import Evaluator
 
@@ -9,13 +9,13 @@ from src.dataset import TQADataset, TFVDataset
 import pickle as pkl
 from src.model.mula_tabpro.base import *
 from src.tools.utils import *
-from mula_dp import MultiAgentDataPrep
+from src.model.mula_tabpro.mula_dp import MultiAgentDataPrep
 from src.tools.binder_utils.evaluator import Evaluator
 import threading
 from src.model.mula_tabpro.others.instance_pool import InstancePool
 
 class Experiment:
-    def __init__(self, mulprocess_cnt, llm_name, VERSION=TABLELLM_VERSION):
+    def __init__(self, mulprocess_cnt, llm_name, VERSION=GV.TABLELLM_VERSION):
         self.mulprocess_cnt = mulprocess_cnt
         self.llm_name = llm_name
         self.VERSION = VERSION
@@ -28,7 +28,7 @@ class Experiment:
             os.makedirs(rf'.\tmp\table_llm_log')
 
     def run_multi_agents_data_prep(self, sample_num):
-        BASE_VERSION=TABLELLM_VERSION+f'_{sample_num}' + '_data_prep'
+        BASE_VERSION=GV.TABLELLM_VERSION+f'_{sample_num}' + '_data_prep'
         print(f'BASE_VERSION: {BASE_VERSION}')
         datas = self.load_datas(sample_num)
         print(f'len(datas): {len(datas)}')
@@ -37,7 +37,7 @@ class Experiment:
         self.evaluate_result(BASE_VERSION + '_run_nl2sql', analyze=True)
 
     def run_nl2sql_baseline(self, sample_num):
-        BASE_VERSION=TABLELLM_VERSION+f'_{sample_num}' + '_baseline_nl2sqler'
+        BASE_VERSION=GV.TABLELLM_VERSION+f'_{sample_num}' + '_baseline_nl2sqler'
         print(f'BASE_VERSION: {BASE_VERSION}')
         datas = self.load_datas(sample_num)
         print(f'len(datas): {len(datas)}')
@@ -45,7 +45,7 @@ class Experiment:
         self.evaluate_result(BASE_VERSION, analyze=True)
     
     def _get_original_tbl_size(self):
-        if TASK_TYPE == 'tableqa':
+        if GV.TASK_TYPE == 'tableqa':
             ds = pkl.load(open(rf'.\tmp\wiki_qa.pkl', 'rb'))
             datas = ds.test_unseen_data
         else:
@@ -90,7 +90,7 @@ class Experiment:
             if binder_eval.evaluate(
                 pred.split('|') if type(pred) == str else pred,
                 label.split('|') if type(label) == str else label,
-                'wikitq' if TASK_TYPE == 'tableqa' else 'tab_fact',
+                'wikitq' if GV.TASK_TYPE == 'tableqa' else 'tab_fact',
                 allow_semantic=allow_semantic,
                 question=rec['question']):
 
@@ -125,24 +125,24 @@ class Experiment:
         save_json(eval_results, f'./tmp/outputs/eval_results_v{VERSION}.json')
         return hit_dic
     
-    def load_datas(self, sample_num=-1, split=SPLIT):
+    def load_datas(self, sample_num=-1, split=GV.SPLIT):
 
-        if TASK_TYPE == 'tableqa':
-            if not os.path.exists(rf'.\tmp\{TASK_TYPE}_{split}_{sample_num}.pkl'):
+        if GV.TASK_TYPE == 'tableqa':
+            if not os.path.exists(rf'.\tmp\{GV.TASK_TYPE}_{split}_{sample_num}.pkl'):
                 ds = pkl.load(open(rf'.\tmp\wiki_qa.pkl', 'rb'))
                 # datas = ds.test_unseen_data
                 datas = ds.train_data if split == 'train' else ds.test_unseen_data
                 if sample_num != -1 and sample_num < len(datas):
                     datas = random.sample(datas, sample_num)
                 # save as pkl
-                pkl.dump(datas, open(rf'.\tmp\{TASK_TYPE}_{split}_{sample_num}.pkl', 'wb'))
+                pkl.dump(datas, open(rf'.\tmp\{GV.TASK_TYPE}_{split}_{sample_num}.pkl', 'wb'))
             else:
                 # read pkl
                 print(f'load data from pkl')
-                datas = pkl.load(open(rf'.\tmp\{TASK_TYPE}_{split}_{sample_num}.pkl', 'rb'))
+                datas = pkl.load(open(rf'.\tmp\{GV.TASK_TYPE}_{split}_{sample_num}.pkl', 'rb'))
 
-        if TASK_TYPE == 'tablefact':
-            if not os.path.exists(rf'.\tmp\{TASK_TYPE}_{split}_{sample_num}.pkl'):
+        if GV.TASK_TYPE == 'tablefact':
+            if not os.path.exists(rf'.\tmp\{GV.TASK_TYPE}_{split}_{sample_num}.pkl'):
                 ds = TFVDataset(dataset_name='tabfact')
                 # ds.load_data()
                 ds.load_data_org() if split == 'train' else ds.load_data()
@@ -150,11 +150,11 @@ class Experiment:
                 if sample_num != -1 and sample_num < len(datas):
                     datas = random.sample(datas, sample_num)
                 # save as pkl
-                pkl.dump(datas, open(rf'.\tmp\{TASK_TYPE}_{split}_{sample_num}.pkl', 'wb'))
+                pkl.dump(datas, open(rf'.\tmp\{GV.TASK_TYPE}_{split}_{sample_num}.pkl', 'wb'))
             else:
                 # read pkl
                 print(f'load data from pkl')
-                datas = pkl.load(open(rf'.\tmp\{TASK_TYPE}_{split}_{sample_num}.pkl', 'rb'))
+                datas = pkl.load(open(rf'.\tmp\{GV.TASK_TYPE}_{split}_{sample_num}.pkl', 'rb'))
         
         print(f'Total data: {len(datas)}')
         return datas
@@ -174,7 +174,7 @@ class Experiment:
 
         return data.id, sql, answer, self_corr_inses, icl_inses
 
-    def nl2sql_baseline(self, datas, save=True, BASE_VERSION=TABLELLM_VERSION):
+    def nl2sql_baseline(self, datas, save=True, BASE_VERSION=GV.TABLELLM_VERSION):
         json_result = {}
         
         if os.path.exists(f'./tmp/outputs/result_v{BASE_VERSION}.json'):
@@ -187,10 +187,10 @@ class Experiment:
 
         instance_pool = InstancePool(pool_name=BASE_VERSION.replace('_run_nl2sql', ''), load_from=None)
 
-        for i in tqdm.tqdm(range(0, len(datas), SAVE_STEP)):
+        for i in tqdm.tqdm(range(0, len(datas), GV.SAVE_STEP)):
 
             results = Parallel(n_jobs=self.mulprocess_cnt, require='sharedmem')(
-                delayed(self._nl2sql_one_data)(data, self.llm_name, BASE_VERSION) for data in datas[i:i+SAVE_STEP]\
+                delayed(self._nl2sql_one_data)(data, self.llm_name, BASE_VERSION) for data in datas[i:i+GV.SAVE_STEP]\
                     if data.id not in json_result
             )
 
@@ -241,7 +241,7 @@ class Experiment:
         original_data = copy.deepcopy(data)
         mdp = MultiAgentDataPrep(llm_name=llm_name, logger_file=f'process{process_id}.log', logger_root=f'tmp/table_llm_log/mula_tabpro_v{VERSION}')
         try:
-            if OP_INSTEAD_OF_CODE:
+            if GV.OP_INSTEAD_OF_CODE:
                 processed_data, log_info = mdp.process(data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, CLEAN_FLAG=CLEAN_FLAG, IMPUTATE_FLAG=IMPUTATE_FLAG)
             else:
                 processed_data, log_info = mdp.process_process_table_with_code(data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, CLEAN_FLAG=CLEAN_FLAG, IMPUTATE_FLAG=IMPUTATE_FLAG)
@@ -262,7 +262,7 @@ class Experiment:
 
         return processed_data, log_info, self_corr_inses, icl_inses
 
-    def multi_agents_data_prep(self, datas, save=True, BASE_VERSION=TABLELLM_VERSION, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True):
+    def multi_agents_data_prep(self, datas, save=True, BASE_VERSION=GV.TABLELLM_VERSION, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True):
         processed_datas = []
         log_infos = {}
         mul_dp_temp_data = {}
@@ -277,16 +277,16 @@ class Experiment:
             log_infos = open_json(rf'.\tmp\outputs\mula_tabpro_v{BASE_VERSION}_log_infos.json')
             logger.log_message(msg=f'log_infos: {len(log_infos)}')
 
-        if os.path.exists(MULTIA_TEMP_DATA_PATH):
-            with open(MULTIA_TEMP_DATA_PATH, 'rb') as f:
+        if os.path.exists(GV.MULTIA_TEMP_DATA_PATH):
+            with open(GV.MULTIA_TEMP_DATA_PATH, 'rb') as f:
                 mul_dp_temp_data = pkl.load(f)
 
         instance_pool = InstancePool(pool_name=BASE_VERSION)
 
-        # save results every $SAVE_STEP datas
-        for i in tqdm.tqdm(range(0, len(datas), SAVE_STEP)):
+        # save results every $GV.SAVE_STEP datas
+        for i in tqdm.tqdm(range(0, len(datas), GV.SAVE_STEP)):
             results = Parallel(n_jobs=self.mulprocess_cnt, require='sharedmem')(
-                delayed(self._prepare_one_data)(data, self.llm_name, BASE_VERSION, GEN_COL_FLAG, CLEAN_FLAG, IMPUTATE_FLAG, instance_pool) for data in datas[i:i+SAVE_STEP]\
+                delayed(self._prepare_one_data)(data, self.llm_name, BASE_VERSION, GEN_COL_FLAG, CLEAN_FLAG, IMPUTATE_FLAG, instance_pool) for data in datas[i:i+GV.SAVE_STEP]\
                     if data.id not in log_infos and data.id not in [d.id for d in processed_datas]
             )
 
@@ -310,7 +310,7 @@ class Experiment:
                         log_info.pop('relcol_mapreq_bindersql')
                         if processed_data.id not in mul_dp_temp_data:
                             mul_dp_temp_data[processed_data.id] = binder_result_dic
-                            with open(MULTIA_TEMP_DATA_PATH, 'wb') as f:
+                            with open(GV.MULTIA_TEMP_DATA_PATH, 'wb') as f:
                                 pkl.dump(mul_dp_temp_data, f)
                     # Save as pkl
                     with open(rf'.\tmp\outputs\mula_tabpro_v{BASE_VERSION}_processed_data.pkl', 'wb') as f:
@@ -324,6 +324,5 @@ class Experiment:
         return processed_datas
     
 if __name__ == '__main__':
-    exp = Experiment(mulprocess_cnt=50, llm_name=LLM_DICT['nl2sqler'])
-
-    exp.run_multi_agents_data_prep(sample_num=100)
+    exp = Experiment(mulprocess_cnt=10, llm_name=GV.LLM_DICT['nl2sqler'])
+    exp.run_multi_agents_data_prep(sample_num=10)

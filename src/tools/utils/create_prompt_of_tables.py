@@ -1,11 +1,11 @@
 import pandas as pd
 
 from src.data import TQAData
-from global_values import TYPE_DEDUCE_RATIO, DEFAULT_ROW_CUT
+import global_values as GV
 
 from .funcs import cal_tokens
 
-def df_to_cotable(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT):
+def df_to_cotable(df: pd.DataFrame, cut_line = GV.DEFAULT_ROW_CUT):
         ret = ""
         col_str = ' | '.join(df.columns) + '\n'
         ret += col_str
@@ -20,7 +20,7 @@ def df_to_cotable(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT):
 
         return ret.strip()
 
-def df_to_cotable_add_quo(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT):
+def df_to_cotable_add_quo(df: pd.DataFrame, cut_line = GV.DEFAULT_ROW_CUT):
         ret = ""
         col_str = ' | '.join(df.columns) + '\n'
         ret += col_str
@@ -43,7 +43,7 @@ def df_to_json_dict(data:dict):
     ret += '}'
     return ret
 
-def df_to_str_columns_add_quo(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, exclude_cols = [], col_type = None):
+def df_to_str_columns_add_quo(df: pd.DataFrame, cut_line = GV.DEFAULT_ROW_CUT, exclude_cols = [], col_type = None):
     ret = ""
     if col_type is not None:
         ret += 'Columns: ' + ', '.join([f'"{col}"({col_type[col]})' if col in col_type else f'"{col}"(string)'
@@ -59,7 +59,7 @@ def df_to_str_columns_add_quo(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, excl
         ret += f'"{col}": ' + ' | '.join([f'{str(x)}' if type(x) != str else f'"{str(x)}"' for x in values]) + '\n'
     return ret.strip()
 
-def df_to_str_columns(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, exclude_cols = [], col_type = None):
+def df_to_str_columns(df: pd.DataFrame, cut_line = GV.DEFAULT_ROW_CUT, exclude_cols = [], col_type = None):
     ret = ""
     if col_type is not None:
         ret += 'Columns: ' + ', '.join([f'"{col}"({col_type[col]})' if col in col_type else f'"{col}"(string)'
@@ -75,7 +75,7 @@ def df_to_str_columns(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, exclude_cols
         ret += f'"{col}": ' + ' | '.join([f'{str(x)}' for x in values]) + '\n'
     return ret.strip()
 
-def df_to_cotable_old(df: pd.DataFrame, cut_line = DEFAULT_ROW_CUT, row_flag='row'):
+def df_to_cotable_old(df: pd.DataFrame, cut_line = GV.DEFAULT_ROW_CUT, row_flag='row'):
     ret = ""
     col_str = f'col : ' + ' | '.join(df.columns) + '\n'
     ret += col_str
@@ -131,9 +131,9 @@ def _float_is_int(df: pd.DataFrame, col):
             is_int += 1
         except:
             tol += 1
-    return float(is_int) / (tol+1e-6) > TYPE_DEDUCE_RATIO
+    return float(is_int) / (tol+1e-6) > GV.TYPE_DEDUCE_RATIO
 
-def binder_nl2sql_prompt(data:TQAData, cut_line=DEFAULT_ROW_CUT, specify_line=False):
+def binder_nl2sql_prompt(data:TQAData, cut_line=GV.DEFAULT_ROW_CUT, specify_line=False):
 
     col_and_type = []
     for col in data.tbl.columns:

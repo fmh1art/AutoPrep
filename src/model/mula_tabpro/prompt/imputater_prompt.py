@@ -1,11 +1,11 @@
-from global_values import NAMES
+import global_values as GV
 
 IMPUTATER_PROMPT = {
 	'head': """This agent is designed to deduce the missing value of the column(s) in the table. 
 
 If some values can not be deduced, please keep the original value. If some values are ambiguous, please deduce a reasonable value to try not to affect the execution of the SQL query.""",
 
-    f"demo_{NAMES['STAND_NUMERICAL']}": """Please deduce the unstandardized values in the column `rank` to numerical format.
+    f"demo_{GV.NAMES['STAND_NUMERICAL']}": """Please deduce the unstandardized values in the column `rank` to numerical format.
 
 /*
 {
@@ -74,7 +74,7 @@ Requirement: please standardize the column `diameter` to numerical format and fi
 SQL: SELECT `diameter` FROM w WHERE `diameter` > 20
 Output: ```{4: {'diameter': '32-33 mm', 'diameter_cleaned': 32}}```""",
 
-	f"demo_{NAMES['STAND_DATETIME']}": """Please deduce the unstandardized values in the column `date` to datetime format.
+	f"demo_{GV.NAMES['STAND_DATETIME']}": """Please deduce the unstandardized values in the column `date` to datetime format.
 
 /*
 {
@@ -113,7 +113,7 @@ Requirement: please standardize the column `season` to datetime format and fill 
 SQL: SELECT `season` FROM w WHERE `season` LIKE '%2001%'
 Output: ```{1: {'season': '1997-98', 'season_cleaned': '1997-1998'}, 2: {'season': '1998-99', 'season_cleaned': '1998-1999'}, 3: {'season': '1999-00', 'season_cleaned': '1999-2000'}, 4: {'season': '2000-01', 'season_cleaned': '2000-2001'}}```""",
 
-	f"demo_{NAMES['GEN_NEW_COL']}": """Please deduce the values that does not generate correctly.
+	f"demo_{GV.NAMES['GEN_NEW_COL']}": """Please deduce the values that does not generate correctly.
 
 /*
 {

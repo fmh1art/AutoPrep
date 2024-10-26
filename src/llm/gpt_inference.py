@@ -1,12 +1,12 @@
 import os, copy, time
 from openai import OpenAI
 from src.tools.utils import open_json, save_json
-from global_values import *
-if OPENAI_BASE_URL is not None:
-    os.environ["OPENAI_BASE_URL"] = OPENAI_BASE_URL
+import global_values as GV
+if GV.OPENAI_BASE_URL is not None:
+    os.environ["OPENAI_BASE_URL"] = GV.OPENAI_BASE_URL
 
 class GPTPOOL:
-    def __init__(self, key_file=KEY_FILE, model="gpt-3.5-turbo-0301", temp=LLM_HYPER_PARAMS['temperature'], root_dir = './tmp/gpt', record_log=False, print_key=False):
+    def __init__(self, key_file=GV.KEY_FILE, model="gpt-3.5-turbo-0301", temp=GV.LLM_HYPER_PARAMS['temperature'], root_dir = './tmp/gpt', record_log=False, print_key=False):
         self.key_file = key_file
         self.model = model
         self.temp = temp
@@ -58,7 +58,7 @@ class GPTPOOL:
             model=self.model,
             messages=[{"role": "user", "content": ask}],
             temperature=self.temp if self.temp != -1 else 1,
-            max_tokens=MAX_OUTPUT_LIMIT
+            max_tokens=GV.MAX_OUTPUT_LIMIT
         )
         # print(completion)
         ans = completion.choices[0].message.content

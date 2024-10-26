@@ -1,7 +1,7 @@
 from .simple_operator import *
 
 class RemoveUnit(SimpleOperator):
-    def __init__(self, llm_model='gpt-3.5-turbo', op_type=NAMES['REMOVE_UNIT'], log_root='tmp/table_llm_log', log_file=f'mula_tabpro_v{TABLELLM_VERSION}.log', PROMPT={'demo': '', 'query': '', 'head': ''}):
+    def __init__(self, llm_model='gpt-3.5-turbo', op_type=GV.NAMES['REMOVE_UNIT'], log_root='tmp/table_llm_log', log_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log', PROMPT={'demo': '', 'query': '', 'head': ''}):
         super().__init__(llm_model, op_type, log_root, log_file, PROMPT)
 
     def execute(self, data:TQAData):
@@ -22,7 +22,7 @@ class RemoveUnit(SimpleOperator):
         new_col = f'{col}_{unit}'.replace(' ', '')
 
         num_rat = numerical_ratio(df, new_col)
-        if num_rat > TYPE_DEDUCE_RATIO:
+        if num_rat > GV.TYPE_DEDUCE_RATIO:
             data.tbl = standardize_to_numerical(data.tbl, col)
             data.col_type[col] = 'numerical'
 

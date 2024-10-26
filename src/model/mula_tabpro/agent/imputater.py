@@ -1,14 +1,14 @@
 from .simple_agent import *
 
 class Imputater(Agent):
-    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='imputater', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{TABLELLM_VERSION}.log'):
+    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='imputater', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log'):
         super().__init__(llm_name=llm_name, chains=chains, PROMPT=PROMPT, agent_name=agent_name, logger_root=logger_root, logger_file=logger_file)
         self.MAX_ROW_NUM = 5
         self.MAX_ROW_IMPUTATE = 80
     
     def _standardize_prompt(self, records: List, is_cleans: List, col:str, coltype:str, key:str, begin_idx:int, sql: str, instance_pool:InstancePool=None):
         
-        demo = IMPUTATER_PROMPT[f"demo_{NAMES[key]}"]
+        demo = IMPUTATER_PROMPT[f"demo_{GV.NAMES[key]}"]
         query_temp = IMPUTATER_PROMPT['query_standardize']
         
         prompt = ''
@@ -32,10 +32,10 @@ class Imputater(Agent):
             query = query_temp.format(table=table, column=col, coltype=coltype, rows=rows, sql=sql)
 
             prompt = demo + '\n\n' + query
-            if cal_tokens(prompt) <= MAX_INPUT_LIMIT-MAX_OUTPUT_LIMIT:
+            if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
                 break
 
-        if cal_tokens(prompt) > MAX_INPUT_LIMIT-MAX_OUTPUT_LIMIT:
+        if cal_tokens(prompt) > GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
             raise ValueError(f'E: The first row is too long!')
         
         return prompt, len(data), data_id2record_id
@@ -122,8 +122,8 @@ class Imputater(Agent):
                                                 col=col, coltype=coltype, key=key, begin_idx=begin_idx, sql=sql, instance_pool=instance_pool)
             out = self.gpt.query(prompt)
 
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Prompt: {prompt}')
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Output: {out}')    
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Prompt: {prompt}')
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Output: {out}')    
 
             try:
                 cleaned_by_llm = self._standardize_parse_output(out, data_id2record_id, col)
@@ -141,8 +141,8 @@ class Imputater(Agent):
                 imputate_val = val_dic[f'{col}_cleaned']
                 cleaned_data.tbl.iloc[record_id][col] = imputate_val
             
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Imputate {col} from {begin_idx} to {begin_idx+row_num-1}') 
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Get New Table:\n{cleaned_data.tbl}')
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Imputate {col} from {begin_idx} to {begin_idx+row_num-1}') 
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Get New Table:\n{cleaned_data.tbl}')
 
             # 3. update the begin_idx
             begin_idx += row_num
@@ -153,7 +153,7 @@ class Imputater(Agent):
         return cleaned_data
     
     def _col_generate_prompt(self, records: List, succ_generates: List, source_cols:List[str], target_col:str, begin_idx:int, sql: str, instance_pool:InstancePool=None):
-        demo = IMPUTATER_PROMPT[f"demo_{NAMES['GEN_NEW_COL']}"]
+        demo = IMPUTATER_PROMPT[f"demo_{GV.NAMES['GEN_NEW_COL']}"]
         query_temp = IMPUTATER_PROMPT['query_generate']
 
         prompt = ''
@@ -181,10 +181,10 @@ class Imputater(Agent):
             query = query_temp.format(table=table, new_col=new_col, column_flag=column_flag, column_str=column_str, rows=rows, sql=sql)
 
             prompt = demo + '\n\n' + query
-            if cal_tokens(prompt) <= MAX_INPUT_LIMIT-MAX_OUTPUT_LIMIT:
+            if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
                 break
 
-        if cal_tokens(prompt) > MAX_INPUT_LIMIT-MAX_OUTPUT_LIMIT:
+        if cal_tokens(prompt) > GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
             raise ValueError(f'E: The first row is too long!')
         
         return prompt, len(data), data_id2record_id
@@ -271,8 +271,8 @@ class Imputater(Agent):
                                                 , instance_pool=instance_pool)
             out = self.gpt.query(prompt)
 
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Prompt: {prompt}')
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Output: {out}')    
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Prompt: {prompt}')
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Output: {out}')    
 
             try:  
                 generated_by_llm = self._col_generate_parse_output(out, data_id2record_id, new_col)
@@ -292,8 +292,8 @@ class Imputater(Agent):
                 # replace the value in record_id-th row
                 data.tbl.iloc[record_id][new_col] = imputate_val
             
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Imputate {new_col} from {begin_idx} to {begin_idx+row_num-1}') 
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Get New Table:\n{data.tbl}')
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Imputate {new_col} from {begin_idx} to {begin_idx+row_num-1}') 
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Get New Table:\n{data.tbl}')
 
             # 3. update the begin_idx
             begin_idx += row_num

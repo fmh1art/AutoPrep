@@ -4,15 +4,15 @@ from typing import List
 from Levenshtein import ratio
 import numpy as np
 
-from global_values import MEMORY_RETREIVE_FUNC, TABLELLM_VERSION
+import global_values as GV
 from src.tools.logger import Logger
 
 class TextSimRetriever:
-    def __init__(self, texts:List[str], ids, sim_func=MEMORY_RETREIVE_FUNC, type=None,):
+    def __init__(self, texts:List[str], ids, sim_func=GV.MEMORY_RETREIVE_FUNC, type=None,):
         self.texts = texts
         self.ids = ids
         self.sim_func = sim_func
-        self.logger = Logger(name=type, root=f'tmp/table_llm_log/mula_tabpro_v{TABLELLM_VERSION}/retriever', log_file=f'{type}.log')
+        self.logger = Logger(name=type, root=f'tmp/table_llm_log/mula_tabpro_v{GV.TABLELLM_VERSION}/retriever', log_file=f'{type}.log')
         if self.sim_func == 'SBERT_EMB_SIM':
             from sentence_transformers import SentenceTransformer
             self.encoder = SentenceTransformer('sentence-transformers/bert-base-nli-mean-tokens')

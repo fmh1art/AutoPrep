@@ -1,0 +1,2948 @@
+---------------------------- 2024-10-24 15:20:33,771 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	chicago
+jill	50	$5000	houston
+jack	60	$6000	phoenix
+*/
+Q: What is the average salary of the employees?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-24 15:20:33,775 - Binder - DEBUG ---------------------------- 
+Output: ```sql
+SELECT AVG(CAST(MAP("remove dollar sign and commas"; `salary`) AS DECIMAL(10, 2))) AS average_salary FROM w;
+```
+---------------------------- 2024-10-24 15:20:33,786 - MultiAgentDataPrep - DEBUG ---------------------------- 
+/*************** {'related_columns': [], 'mapping_requirements': [('remove dollar sign and commas', ('salary',))], 'binder_sqls': ['SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ( 10 , 2 ) ) ) AS average_salary FROM w ;']} ***************/
+---------------------------- 2024-10-24 15:20:38,521 - View_generator - DEBUG ---------------------------- 
+Prompt: You are a agent to generate a new column. You Can use Operators from one of the following: extract_column, calculate_column, boolean_column, combine_column.
+
+The operators aim to generate a new column based on the existing column(s). We use the operator by specifying the arguments `new_column` and the `func` function.
+
+Here are example of using the operators,
+
+/*
+"career_win_loss": "22-88" | "nan" | "17-20" | "11-14"
+*/
+Given the column `career_win_loss` please generate a new column to answer: how many wins?
+Operator: ```extract_column(df, new_column="win_number", func=lambda x: int(str(x['career_win_loss']).split('-')[0]) if '-' in str(x['career_win_loss']) else '[n.a.]')```
+
+/*
+"enter_office": "1996-99" | "1998-2002" | "2000-04" | "2002-06" | "2004-08"
+*/
+Given the column `enter_office` please generate a new column to answer: how many years in office?
+Operator: ```calculate_column(df, new_column="years_in_office", func=lambda x: (int(str(x['enter_office']).split('-')[1][-2:]) - int(str(x['enter_office']).split('-')[0][-2:]))%100)```
+
+/*
+"year": 2005 | 2010 | 2007 | 2009
+"month": 5 | 5 | [n.a.] | 12
+"day": 4 | 22 | 1 | 31
+*/
+Given the column `year`, `month`, `day` please generate a new column to answer: what is the date?
+Operator: ```combine_column(df, new_column="date", func=lambda x: str(x['year']) + '-' + str(x['month']) + '-' + str(x['day']))```
+
+/*
+"term": "1859-1864" | "?-1880" | "1864-1869" | "1869-1880"
+*/
+Given the column `term` please generate a new column to answer: how long does it last?
+Operator: ```calculate_column(df, new_column="duration", func=lambda x: int(str(x['term']).split('-')[1]) - int(str(x['term']).split('-')[0]))```
+
+/*
+"prominence": "10080 ft; 3072 m" | "1677 ft; 511 m" | "7196 ft; 2193 m" | 10000 | 10000 | 10000
+*/
+Given the column `prominence` please generate a new column to answer: prominence in ft?
+Operator: ```extract_column(df, new_column="prominence_ft", func=lambda x: int(str(x['prominence']).split(';')[0].split(' ')[0]) if ';' in str(x['prominence']) else '[n.a.]')```
+
+/*
+"place": "søfteland , norway" | "nan" | "york , united kingdom" | "burrator , united kingdom"
+*/
+Given the column `place` please generate a new column to answer: is it in united kingdom?
+Operator: ```boolean_column(df, new_column="in_uk", func=lambda x: 'united kingdom' in str(x['place']))```
+
+Please complete the following prompt.
+
+/*
+"salary": "$2000" | "$3000" | "$4000" | "$5000" | "$6000"
+*/
+Given the column `salary` please generate a new column to answer: remove dollar sign and commas
+Operator:
+---------------------------- 2024-10-24 15:20:38,526 - View_generator - DEBUG ---------------------------- 
+Output: ```extract_column(df, new_column="salary_cleaned", func=lambda x: int(str(x['salary']).replace('$', '').replace(',', '')))```
+---------------------------- 2024-10-24 15:20:38,529 - extract_column - DEBUG ---------------------------- 
+Args: {'new_column': 'salary_cleaned', 'func': "lambda x: int(str(x['salary']).replace('$', '').replace(',', ''))", 'source_cols': ['salary']}
+---------------------------- 2024-10-24 15:20:38,532 - View_generator - DEBUG ---------------------------- 
+New Table is:
+   name age salary         city  salary_cleaned
+0  john  20  $2000     new york            2000
+1  jane  30  $3000  los angeles            3000
+2   jim  40  $4000      chicago            4000
+3  jill  50  $5000      houston            5000
+4  jack  60  $6000      phoenix            6000
+---------------------------- 2024-10-24 15:20:38,534 - View_generator - DEBUG ---------------------------- 
+---- ID: NO_ID, NO BUGS! ----
+---------------------------- 2024-10-24 15:20:42,070 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"salary_cleaned": 2000 | 3000 | 4000 | 5000 | 6000
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ( 10 , 2 ) ) ) AS average_salary FROM w ;
+Related Columns: salary_cleaned
+Column Type Dict:
+---------------------------- 2024-10-24 15:20:42,076 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "salary_cleaned": "numerical"
+}
+```
+---------------------------- 2024-10-24 15:20:45,781 - Cleaner - DEBUG ---------------------------- 
+Prompt: The operator `standardize_numerical` aims to standardize the numerical column. We use the operator by specifying the arguments `column` and the lambda function `func`.
+
+Here are some examples of using the operator `standardize_numerical`,
+
+/*
+"notes": "5000" | "5000" | "10,000" | "10,000" | "10000" | "10,000"
+*/
+Requirement: lease standardize the column `notes` to numerical format.
+Operator: ```standardize_numerical(df, column='notes', func=lambda x: int(x.replace(',', '')))```
+
+/*
+"score": "25 pt" | "30 pt" | "20 pt" | "15 pt" | "10 pt"
+*/
+Requirement: please standardize the column `score` to numerical format.
+Operator: ```standardize_numerical(df, score='date', func=lambda x: int(x.replace('pt', '').strip()))```
+
+/*
+"notes": 1 episode | 1 episode | 119 episodes | 13 episodes | voice<br>3 episodes | episode: \drugs are bad | [n.a.] | season 3 episode 24 'to tell the truth'
+*/
+Requirement: please standardize the column `notes` to numerical format.
+Operator: ```standardize_numerical(df, column='notes', func=lambda x: int(re.search(r'\d+ ', x).group() if 'episodes' in x else 1 if 'episode' in x else '[n.a.]'))```
+
+Given the column and the requirement, please use the operator `standardize_numerical` to standardize the column to the required format.
+
+/*
+"salary_cleaned": 2000 | 3000 | 4000 | 5000 | 6000
+*/
+Requirement: please standardize the column `salary_cleaned` to numerical format.
+Output ```operator_with_args``` with NO other texts.
+Operator:
+---------------------------- 2024-10-24 15:20:45,782 - Cleaner - DEBUG ---------------------------- 
+Output: ```standardize_numerical(df, column='salary_cleaned', func=lambda x: int(x))```
+---------------------------- 2024-10-24 15:20:45,783 - standardize_numerical - DEBUG ---------------------------- 
+Args: {'column': 'salary_cleaned', 'func': 'lambda x: int(x)'}
+---------------------------- 2024-10-24 15:20:45,787 - Cleaner - DEBUG ---------------------------- 
+New Table is:
+   name age salary         city  salary_cleaned
+0  john  20  $2000     new york            2000
+1  jane  30  $3000  los angeles            3000
+2   jim  40  $4000      chicago            4000
+3  jill  50  $5000      houston            5000
+4  jack  60  $6000      phoenix            6000
+---------------------------- 2024-10-24 15:20:45,787 - Cleaner - DEBUG ---------------------------- 
+---- ID: NO_ID, NO BUGS! ----
+---------------------------- 2024-10-24 15:21:30,007 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	chicago
+jill	50	$5000	houston
+jack	60	$6000	phoenix
+*/
+Q: What is the average salary of the employees?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-24 15:21:30,009 - Binder - DEBUG ---------------------------- 
+Output: ```SELECT AVG(CAST(MAP("remove dollar sign and commas"; `salary`) AS DECIMAL)) AS average_salary FROM w```
+---------------------------- 2024-10-24 15:21:30,012 - MultiAgentDataPrep - DEBUG ---------------------------- 
+/*************** {'related_columns': [], 'mapping_requirements': [('remove dollar sign and commas', ('salary',))], 'binder_sqls': ['SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) AS average_salary FROM w']} ***************/
+---------------------------- 2024-10-24 15:21:34,688 - View_generator - DEBUG ---------------------------- 
+Prompt: You are a agent to generate a new column. You Can use Operators from one of the following: extract_column, calculate_column, boolean_column, combine_column.
+
+The operators aim to generate a new column based on the existing column(s). We use the operator by specifying the arguments `new_column` and the `func` function.
+
+Here are example of using the operators,
+
+/*
+"career_win_loss": "22-88" | "nan" | "17-20" | "11-14"
+*/
+Given the column `career_win_loss` please generate a new column to answer: how many wins?
+Operator: ```extract_column(df, new_column="win_number", func=lambda x: int(str(x['career_win_loss']).split('-')[0]) if '-' in str(x['career_win_loss']) else '[n.a.]')```
+
+/*
+"enter_office": "1996-99" | "1998-2002" | "2000-04" | "2002-06" | "2004-08"
+*/
+Given the column `enter_office` please generate a new column to answer: how many years in office?
+Operator: ```calculate_column(df, new_column="years_in_office", func=lambda x: (int(str(x['enter_office']).split('-')[1][-2:]) - int(str(x['enter_office']).split('-')[0][-2:]))%100)```
+
+/*
+"year": 2005 | 2010 | 2007 | 2009
+"month": 5 | 5 | [n.a.] | 12
+"day": 4 | 22 | 1 | 31
+*/
+Given the column `year`, `month`, `day` please generate a new column to answer: what is the date?
+Operator: ```combine_column(df, new_column="date", func=lambda x: str(x['year']) + '-' + str(x['month']) + '-' + str(x['day']))```
+
+/*
+"term": "1859-1864" | "?-1880" | "1864-1869" | "1869-1880"
+*/
+Given the column `term` please generate a new column to answer: how long does it last?
+Operator: ```calculate_column(df, new_column="duration", func=lambda x: int(str(x['term']).split('-')[1]) - int(str(x['term']).split('-')[0]))```
+
+/*
+"prominence": "10080 ft; 3072 m" | "1677 ft; 511 m" | "7196 ft; 2193 m" | 10000 | 10000 | 10000
+*/
+Given the column `prominence` please generate a new column to answer: prominence in ft?
+Operator: ```extract_column(df, new_column="prominence_ft", func=lambda x: int(str(x['prominence']).split(';')[0].split(' ')[0]) if ';' in str(x['prominence']) else '[n.a.]')```
+
+/*
+"place": "søfteland , norway" | "nan" | "york , united kingdom" | "burrator , united kingdom"
+*/
+Given the column `place` please generate a new column to answer: is it in united kingdom?
+Operator: ```boolean_column(df, new_column="in_uk", func=lambda x: 'united kingdom' in str(x['place']))```
+
+Please complete the following prompt.
+
+/*
+"salary": "$2000" | "$3000" | "$4000" | "$5000" | "$6000"
+*/
+Given the column `salary` please generate a new column to answer: remove dollar sign and commas
+Operator:
+---------------------------- 2024-10-24 15:21:34,690 - View_generator - DEBUG ---------------------------- 
+Output: ```extract_column(df, new_column="salary_cleaned", func=lambda x: int(str(x['salary']).replace('$', '').replace(',', '')))```
+---------------------------- 2024-10-24 15:21:34,694 - extract_column - DEBUG ---------------------------- 
+Args: {'new_column': 'salary_cleaned', 'func': "lambda x: int(str(x['salary']).replace('$', '').replace(',', ''))", 'source_cols': ['salary']}
+---------------------------- 2024-10-24 15:21:34,698 - View_generator - DEBUG ---------------------------- 
+New Table is:
+   name age salary         city  salary_cleaned
+0  john  20  $2000     new york            2000
+1  jane  30  $3000  los angeles            3000
+2   jim  40  $4000      chicago            4000
+3  jill  50  $5000      houston            5000
+4  jack  60  $6000      phoenix            6000
+---------------------------- 2024-10-24 15:21:34,699 - View_generator - DEBUG ---------------------------- 
+---- ID: NO_ID, NO BUGS! ----
+---------------------------- 2024-10-24 15:21:38,280 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"salary_cleaned": 2000 | 3000 | 4000 | 5000 | 6000
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) AS average_salary FROM w
+Related Columns: salary_cleaned
+Column Type Dict:
+---------------------------- 2024-10-24 15:21:38,282 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "salary_cleaned": "numerical"
+}
+```
+---------------------------- 2024-10-24 15:21:42,020 - Cleaner - DEBUG ---------------------------- 
+Prompt: The operator `standardize_numerical` aims to standardize the numerical column. We use the operator by specifying the arguments `column` and the lambda function `func`.
+
+Here are some examples of using the operator `standardize_numerical`,
+
+/*
+"notes": "5000" | "5000" | "10,000" | "10,000" | "10000" | "10,000"
+*/
+Requirement: lease standardize the column `notes` to numerical format.
+Operator: ```standardize_numerical(df, column='notes', func=lambda x: int(x.replace(',', '')))```
+
+/*
+"score": "25 pt" | "30 pt" | "20 pt" | "15 pt" | "10 pt"
+*/
+Requirement: please standardize the column `score` to numerical format.
+Operator: ```standardize_numerical(df, score='date', func=lambda x: int(x.replace('pt', '').strip()))```
+
+/*
+"notes": 1 episode | 1 episode | 119 episodes | 13 episodes | voice<br>3 episodes | episode: \drugs are bad | [n.a.] | season 3 episode 24 'to tell the truth'
+*/
+Requirement: please standardize the column `notes` to numerical format.
+Operator: ```standardize_numerical(df, column='notes', func=lambda x: int(re.search(r'\d+ ', x).group() if 'episodes' in x else 1 if 'episode' in x else '[n.a.]'))```
+
+Given the column and the requirement, please use the operator `standardize_numerical` to standardize the column to the required format.
+
+/*
+"salary_cleaned": 2000 | 3000 | 4000 | 5000 | 6000
+*/
+Requirement: please standardize the column `salary_cleaned` to numerical format.
+Output ```operator_with_args``` with NO other texts.
+Operator:
+---------------------------- 2024-10-24 15:21:42,021 - Cleaner - DEBUG ---------------------------- 
+Output: ```operator_with_args
+standardize_numerical(df, column='salary_cleaned', func=lambda x: int(x))
+```
+---------------------------- 2024-10-24 15:21:42,023 - standardize_numerical - DEBUG ---------------------------- 
+Args: {'column': 'salary_cleaned', 'func': 'lambda x: int(x)'}
+---------------------------- 2024-10-24 15:21:42,026 - Cleaner - DEBUG ---------------------------- 
+New Table is:
+   name age salary         city  salary_cleaned
+0  john  20  $2000     new york            2000
+1  jane  30  $3000  los angeles            3000
+2   jim  40  $4000      chicago            4000
+3  jill  50  $5000      houston            5000
+4  jack  60  $6000      phoenix            6000
+---------------------------- 2024-10-24 15:21:42,027 - Cleaner - DEBUG ---------------------------- 
+---- ID: NO_ID, NO BUGS! ----
+---------------------------- 2024-10-24 15:21:58,293 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	salary_cleaned int
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+salary_cleaned
+2000
+3000
+4000
+5000
+6000
+*/
+Q: What is the average salary of the employees?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-24 15:21:58,296 - Binder - DEBUG ---------------------------- 
+Output: ```SELECT AVG(salary_cleaned) FROM w```
+---------------------------- 2024-10-24 15:21:58,301 - MultiAgentDataPrep - DEBUG ---------------------------- 
+/*************** {'related_columns': ['salary_cleaned'], 'mapping_requirements': [], 'binder_sqls': ['SELECT AVG ( `salary_cleaned` ) FROM w']} ***************/
+---------------------------- 2024-10-24 15:22:01,578 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"salary_cleaned": 2000 | 3000 | 4000 | 5000 | 6000
+*/
+SQL: SELECT AVG ( `salary_cleaned` ) FROM w
+Related Columns: salary_cleaned
+Column Type Dict:
+---------------------------- 2024-10-24 15:22:01,579 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "salary_cleaned": "numerical"
+}
+```
+---------------------------- 2024-10-24 15:22:04,730 - Cleaner - DEBUG ---------------------------- 
+Prompt: The operator `standardize_numerical` aims to standardize the numerical column. We use the operator by specifying the arguments `column` and the lambda function `func`.
+
+Here are some examples of using the operator `standardize_numerical`,
+
+/*
+"notes": "5000" | "5000" | "10,000" | "10,000" | "10000" | "10,000"
+*/
+Requirement: lease standardize the column `notes` to numerical format.
+Operator: ```standardize_numerical(df, column='notes', func=lambda x: int(x.replace(',', '')))```
+
+/*
+"score": "25 pt" | "30 pt" | "20 pt" | "15 pt" | "10 pt"
+*/
+Requirement: please standardize the column `score` to numerical format.
+Operator: ```standardize_numerical(df, score='date', func=lambda x: int(x.replace('pt', '').strip()))```
+
+/*
+"notes": 1 episode | 1 episode | 119 episodes | 13 episodes | voice<br>3 episodes | episode: \drugs are bad | [n.a.] | season 3 episode 24 'to tell the truth'
+*/
+Requirement: please standardize the column `notes` to numerical format.
+Operator: ```standardize_numerical(df, column='notes', func=lambda x: int(re.search(r'\d+ ', x).group() if 'episodes' in x else 1 if 'episode' in x else '[n.a.]'))```
+
+Given the column and the requirement, please use the operator `standardize_numerical` to standardize the column to the required format.
+
+/*
+"salary_cleaned": 2000 | 3000 | 4000 | 5000 | 6000
+*/
+Requirement: please standardize the column `salary_cleaned` to numerical format.
+Output ```operator_with_args``` with NO other texts.
+Operator:
+---------------------------- 2024-10-24 15:22:04,734 - Cleaner - DEBUG ---------------------------- 
+Output: ```standardize_numerical(df, column='salary_cleaned', func=lambda x: int(x))```
+---------------------------- 2024-10-24 15:22:04,739 - standardize_numerical - DEBUG ---------------------------- 
+Args: {'column': 'salary_cleaned', 'func': 'lambda x: int(x)'}
+---------------------------- 2024-10-24 15:22:04,743 - Cleaner - DEBUG ---------------------------- 
+New Table is:
+   salary_cleaned
+0            2000
+1            3000
+2            4000
+3            5000
+4            6000
+---------------------------- 2024-10-24 15:22:04,744 - Cleaner - DEBUG ---------------------------- 
+---- ID: NO_ID, NO BUGS! ----
+---------------------------- 2024-10-25 17:59:07,132 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	new york
+jill	50	$5000	houston
+jack	60	$6000	los angeles
+*/
+Q: What is the average salary of the employees who from New York and Los Angeles?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-25 17:59:07,133 - Binder - DEBUG ---------------------------- 
+Output: ```sql
+SELECT AVG(CAST(MAP("remove dollar sign and commas"; `salary`) AS DECIMAL)) 
+FROM w 
+WHERE city IN ('new york', 'los angeles')
+```
+---------------------------- 2024-10-25 17:59:11,980 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+Related Columns: city
+Column Type Dict:
+---------------------------- 2024-10-25 17:59:11,984 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "city": "string"
+}
+```
+---------------------------- 2024-10-25 17:59:45,377 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	new york
+jill	50	$5000	houston
+jack	60	$6000	los angeles
+*/
+Q: What is the average salary of the employees who from New York and Los Angeles?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-25 17:59:45,379 - Binder - DEBUG ---------------------------- 
+Output: ```SELECT AVG(CAST(MAP("remove dollar sign and convert to number"; `salary`) AS DECIMAL)) FROM w WHERE city IN ('new york', 'los angeles')```
+---------------------------- 2024-10-25 17:59:49,819 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and convert to number"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+Related Columns: city
+Column Type Dict:
+---------------------------- 2024-10-25 17:59:49,822 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "city": "string"
+}
+```
+---------------------------- 2024-10-25 18:00:30,376 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+......
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+......
+jack	60	$6000	los angeles
+*/
+Q: What is the average salary of the employees who from New York and Los Angeles?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-25 18:00:30,378 - Binder - DEBUG ---------------------------- 
+Output: ```sql
+SELECT AVG(CAST(MAP("remove dollar sign and commas"; `salary`) AS DECIMAL)) 
+FROM w 
+WHERE city IN ('new york', 'los angeles')
+```
+---------------------------- 2024-10-25 18:00:35,226 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+......
+/*
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+......
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+Related Columns: city
+Column Type Dict:
+---------------------------- 2024-10-25 18:00:35,228 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "city": "string"
+}
+```
+---------------------------- 2024-10-26 10:21:00,588 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	new york
+jill	50	$5000	houston
+jack	60	$6000	los angeles
+*/
+Q: What is the average salary of the employees who from New York and Los Angeles?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-26 10:21:00,593 - Binder - DEBUG ---------------------------- 
+Output: ```sql
+SELECT AVG(CAST(MAP("remove dollar sign and commas"; `salary`) AS DECIMAL)) 
+FROM w 
+WHERE city IN ('new york', 'los angeles')
+```
+---------------------------- 2024-10-26 10:21:03,899 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+Related Columns: city
+Column Type Dict:
+---------------------------- 2024-10-26 10:21:03,902 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "city": "string"
+}
+```
+---------------------------- 2024-10-26 10:21:09,320 - extract_column - DEBUG ---------------------------- 
+Args: {'new_column': 'salary_cleaned', 'func': "lambda x: int(str(x['salary']).replace('$', '').replace(',', ''))", 'source_cols': ['salary']}
+---------------------------- 2024-10-26 10:21:09,324 - filter_columns - DEBUG ---------------------------- 
+Args: {'columns': ['city', 'salary_cleaned']}
+---------------------------- 2024-10-26 10:21:31,873 - View_generator - DEBUG ---------------------------- 
+New Table is:
+   name age salary         city  salary_cleaned
+0  john  20  $2000     new york            2000
+1  jane  30  $3000  los angeles            3000
+2   jim  40  $4000     new york            4000
+3  jill  50  $5000      houston            5000
+4  jack  60  $6000  los angeles            6000
+---------------------------- 2024-10-26 10:43:32,334 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	new york
+jill	50	$5000	houston
+jack	60	$6000	los angeles
+*/
+Q: What is the average salary of the employees who from New York and Los Angeles?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-26 10:43:32,336 - Binder - DEBUG ---------------------------- 
+Output: ```SELECT AVG(CAST(MAP("remove dollar sign and commas"; `salary`) AS DECIMAL)) FROM w WHERE city IN ('new york', 'los angeles')```
+---------------------------- 2024-10-26 10:43:35,718 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+Related Columns: city
+Column Type Dict:
+---------------------------- 2024-10-26 10:43:35,719 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "city": "string"
+}
+```
+---------------------------- 2024-10-26 10:44:17,599 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	new york
+jill	50	$5000	houston
+jack	60	$6000	los angeles
+*/
+Q: What is the average salary of the employees who from New York and Los Angeles?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-26 10:44:17,601 - Binder - DEBUG ---------------------------- 
+Output: ```sql
+SELECT AVG(CAST(MAP("remove dollar sign and commas"; `salary`) AS DECIMAL)) 
+FROM w 
+WHERE city IN ('new york', 'los angeles')
+```
+---------------------------- 2024-10-26 10:44:21,047 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and commas"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+Related Columns: city
+Column Type Dict:
+---------------------------- 2024-10-26 10:44:21,050 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "city": "string"
+}
+```
+---------------------------- 2024-10-26 19:36:07,334 - Binder - DEBUG ---------------------------- 
+Prompt: Generate SQL given the statement and table to verify the statement correctly.
+If statement-relevant column(s) contents are not suitable for SQL comparisons or calculations, map it to a new column with clean content by a new grammar MAP("").
+
+CREATE TABLE w(
+	row_id int,
+	letters text,
+	organization text,
+	nickname text,
+	founding time text,
+	founding university text,
+	type text)
+/*
+Title: cultural interest fraternities and sororities
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	letters	organization	nickname	founding time	founding university	type
+0	αεπ	alpha epsilon pi 1	aepi	1913-11-07 00:00:00	new york university	fraternity
+1	αεφ	alpha epsilon phi 2	aephi	1909-10-24 00:00:00	barnard college	sorority
+2	σαεπ	sigma alpha epsilon pi 3	sigma	1998-10-01 00:00:00	university of california , davis	sorority
+*/
+Q: 4 of the cultural interest fraternity and sorority be fraternity while 3 be a sorority
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w WHERE type = 'fraternity') = 4) AND (SELECT (SELECT COUNT(*) FROM w WHERE type = 'sorority') = 3)```
+
+CREATE TABLE w(
+	row_id int,
+	event text,
+	data text,
+	athlete text,
+	date text,
+	place text)
+/*
+Title: british records in athletics
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	event	data	athlete	date	place
+0	5 km	t19:29	andi drake	1990-05-27 00:00:00	søfteland , norway
+1	5 miles	32:38 +	ian mccombie	1985-03-23 00:00:00	york , united kingdom
+2	10 km	40:17	chris maddocks	1989-04-30 00:00:00	burrator , united kingdom
+*/
+Q: there be 8 different event that take place within the united kingdom
+NeuralSQL: ```SELECT (SELECT COUNT(place) FROM w WHERE MAP("is it in united kingdom?"; `place`) = 'yes') = 8```
+
+CREATE TABLE w(
+	row_id int,
+	tournament text,
+	wins int,
+	top - 10 int,
+	top - 25 int,
+	events int,
+	cuts made int)
+/*
+Title: jeev milkha singh
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	tournament	wins	top - 10	top - 25	events	cuts made
+0	masters tournament	0	0	1	3	2
+1	us open	0	0	0	4	3
+2	the open championship	0	0	0	2	1
+*/
+Q: the number of cut made in the pga championship tournament be smaller than the number of event
+NeuralSQL: ```SELECT (SELECT `cuts made` FROM w WHERE tournament = 'pga championship') < (SELECT events FROM w WHERE tournament = 'pga championship')```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par int)
+/*
+Title: 2008 women 's british open
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par
+0	t1	yuri fudoh	japan	66 + 68 = 134	10
+1	t1	jiyai shin	south korea	66 + 68 = 134	10
+2	3	juli inkster	united states	65 + 70 = 135	9
+*/
+Q: kristie kerr , tie for 4th place , finish the round 1 stroke under lorena ochoa of mexico
+NeuralSQL: ```SELECT (SELECT (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'cristie kerr') < (SELECT MAP("what is the derived score?"; `score`) FROM w WHERE player = 'lorena ochoa' AND country = 'mexico')) AND (SELECT (SELECT place FROM w WHERE player = 'cristie kerr') = "t4")```
+
+CREATE TABLE w(
+	row_id int,
+	call sign text,
+	frequency text,
+	city of license text,
+	facility id int,
+	erp / power w int,
+	height m ( ft ) real,
+	class text)
+/*
+Title: connecticut public radio
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	call sign	frequency	city of license	facility id	erp / power w	height m ( ft )	class
+0	waic	91.9 fm	springfield , ma	1749	230	nan	b1
+1	wedw - fm	88.5 fm	stamford , ct	13619	2000	nan	a
+2	wnpr	90.5 fm ( hd ) connecticut public radio	meriden , ct	13627	18500	nan	b
+*/
+Q: there be 3 station with a call sign number in the 90s
+NeuralSQL: ```SELECT (SELECT COUNT(*) FROM w WHERE MAP("is it in 90s?"; `frequency`) = 'yes' GROUP BY `call sign`) = 3```
+
+CREATE TABLE w(
+	row_id int,
+	place text,
+	player text,
+	country text,
+	score text,
+	to par text,
+	money text)
+/*
+Title: 1987 masters tournament
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	place	player	country	score	to par	money
+0	t1	larry mize	united states	70 + 72 + 72 + 71 = 285	-3	playoff
+1	t1	bernhard langer	spain	73 + 71 + 70 + 71 = 285	-3	playoff
+2	t1	greg norman	australia	73 + 74 + 66 + 72 = 285	-3	playoff
+*/
+Q: bernhard m. langer have more point than roger maltbie during the 1987 master tournament
+NeuralSQL: ```SELECT (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'bernhard langer') > (SELECT MAP("what is the total score?"; `score`) FROM w WHERE player = 'roger maltbie')```
+
+CREATE TABLE w(
+	row_id int,
+	rank int,
+	name text,
+	nation text,
+	points real,
+	places int)
+/*
+Title: 1976 world junior figure skating championships
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	rank	name	nation	points	places
+0	1	sherri baier / robin cowan	canada	128.39	9
+1	2	lorene mitchell / donald mitchell	united states	124.94	16
+2	3	elizabeth cain / peter cain	australia	116.67	33
+*/
+Q: 2 of the 7 top - ranked figure skate team be from france
+NeuralSQL: ```SELECT (SELECT (SELECT COUNT(*) FROM w) = 7) AND (SELECT (SELECT COUNT(*) FROM w WHERE nation = 'france') = 2)```
+
+CREATE TABLE w(
+	row_id int,
+	res text,
+	record text,
+	opponent text,
+	method text,
+	event text,
+	round text)
+/*
+Title: jason chambers
+3 example rows:
+SELECT * FROM w LIMIT 3;
+row_id	res	record	opponent	method	event	round
+0	win	18 - 5 - 2	dan new	submission (rear naked choke)	tfc - power fights	1
+1	win	17 - 5 - 2	rene gonzalez	decision (split)	mainstream mma - cold war	n / a
+2	loss	16 - 5 - 2	tristan yunker	submission ( armbar )	tfc 7 - total fight challenge 7	1
+*/
+Q: in mac - midwest absolute challenge , the player be defeat by dan spychalski in 1 round
+NeuralSQL: ```SELECT (SELECT opponent, (CAST round AS INT) FROM w WHERE event = "mac - midwest absolute challenge")=("dan spychalski", 1)```
+
+CREATE TABLE w(
+	name text
+	age text
+	salary text
+	city text
+)
+/*
+Title: Salary Sheet
+example rows:
+SELECT * FROM w;
+name	age	salary	city
+john	20	$2000	new york
+jane	30	$3000	los angeles
+jim	40	$4000	new york
+jill	50	$5000	houston
+jack	60	$6000	los angeles
+*/
+Q: What is the average salary of the employees who from New York and Los Angeles?
+Output ```your_NeuralSQL_here``` with no other texts.
+NeuralSQL:
+---------------------------- 2024-10-26 19:36:07,342 - Binder - DEBUG ---------------------------- 
+Output: ```SELECT AVG(CAST(MAP("remove dollar sign and convert to number"; `salary`) AS DECIMAL)) FROM w WHERE city IN ('new york', 'los angeles')```
+---------------------------- 2024-10-26 19:36:10,698 - Coltype_deducer - DEBUG ---------------------------- 
+Prompt: This agent is designed to deduce the column type based on the SQL. The column type should be:
+
+- numerical: if the column is used for numerical calculation, such as Sort, Comparison, Min, Max, Sum, Average, etc.
+- datetime: if the column is used for time calculation, such as Sort, Comparision, etc.
+- string: otherwise, if we just need to select, filter, or group by the column.
+
+Deduce the column type based on the NeuralSQL. The Column Type Should be one of the following: 'string', 'numerical', 'datetime'.
+
+/*
+"if_loss": yes | no
+"is_home_court": yes | no
+*/
+SQL: SELECT COUNT(*) FROM w WHERE `if_loss` = 'yes' AND `is_home_court` = 'yes'
+Related Columns: if_loss, is_home_court
+Column Type Dict: {'if_loss': 'string', 'is_home_court': 'string'}
+
+/*
+"kick_off": 8:30am | 1:00pm | 8:30am
+"game_site": away | home | away
+*/
+SQL: SELECT `kick_off` FROM w ORDER by `kick_off` LIMIT 1
+Related Columns: kick_off, game_site
+Column Type Dict: {'kick_off': 'datetime', 'game_site': 'string'}
+
+/*
+"2010": 1382 | 1390 | 45
+"2012": 1584 | 1638 | 90
+"filledcolumnname": hydro power | thermal | other renewable
+*/
+SQL: SELECT CASE WHEN (SELECT `2010` FROM w WHERE `filledcolumnname` = 'hydro power') < (SELECT `2012` FROM w WHERE `filledcolumnname` = 'hydro power') THEN 'increase' ELSE 'decrease' END
+Related Columns: 2010, 2012, filledcolumnname
+Column Type Dict: {'2010': 'numerical', '2012': 'numerical', 'filledcolumnname': 'string'}
+
+/*
+"time": 5:23.45 | 6:23.45 | 7:23.45
+"date": 06-22 | 06-22 | 07-24
+"name": Anna | Bob | Charlie
+*/
+SQL: SELECT `name` FROM w WHERE `date` = '06-22' ORDER by `time` LIMIT 1
+Related Columns: time, date, name
+Column Type Dict: {'time': 'datetime', 'date': 'datetime', 'name': 'string'}
+
+/*
+party_name: new renaissance party | new party | new party
+row_id: 1 | 2 | 3
+*/
+SQL: SELECT `party_name` FROM w WHERE `row_id` = (SELECT `row_id` FRO0M w WHERE `party_name` = 'new renaissance party') - 1
+Related Columns: party_name, row_id
+Column Type Dict: {'party_name': 'string', 'row_id': 'numerical'}
+
+/*
+"artist": gonzaga coutinho | predro osorio | concha
+"draw": 1 | 2 | 3
+*/
+SQL: SELECT `artist` FROM w ORDER by `draw` desc LIMIT 1
+Related Columns: artist, draw
+Column Type Dict: {'artist': 'string', 'draw': 'numerical'}
+
+/*
+"date": 6th June 1996 | 31th March 1999 | 29th July 2000
+"wrestler": jonnie stewart | king kong bundy | the patriot; (danny dominion)
+*/
+SQL: SELECT `date` FROM w WHERE `wrestler` = 'steve corino' ORDER by `date` LIMIT 1
+Related Columns: date, wrestler
+Column Type Dict: {'date': 'datetime', 'wrestler': 'string'}
+
+/*
+"males": 216,794 | 24,538 | 17,409
+"females": 230,891 | 16,677 | 18,522
+"language": polish | yiddish | german
+*/
+SQL: SELECT `males` + `females` FROM w WHERE `language` = 'german'
+Related Columns: males, females, language
+Column Type Dict: {'male': 'numerical', 'female': 'numerical', 'language': 'string'}
+
+/*
+"year": 1898 | 1893 | 1898
+"ger_nos": 12 | 13 | 14
+*/
+SQL: SELECT `year` FROM w WHERE `year` IN ( '1898' , '1893' ) GROUP by `year` ORDER by SUM (`ger_nos`) desc LIMIT 1
+Related Columns: year, ger_nos
+Column Type Dict: {'year': 'string', 'ger_nos': 'numerical'}
+
+/*
+"year": 2001 | 2001 | 2001 | 2003 | 2003
+"event": 400 m | medley relay | 4x400 m relay | 400 m | 4x400 m relay | 400 m
+"notes": 47.12 | 1:50.46 | 3:06.12 | 46.69 | 3:08.62 | 46.62
+*/
+SQL: SELECT `notes` FROM w WHERE `year` = 2005 AND `event` = '4x400 m relay'
+Related Columns: event, notes, year
+Column Type Dict: {'year': 'numerical', 'event': 'string', 'notes': 'string'}
+
+Please complete the following prompt.
+/*
+"city": new york | los angeles | new york | houston | los angeles
+*/
+SQL: SELECT AVG ( cast ( MAP("remove dollar sign and convert to number"; `salary`) AS decimal ) ) FROM w WHERE `city` IN ( "new york" , "los angeles" )
+Related Columns: city
+Column Type Dict:
+---------------------------- 2024-10-26 19:36:10,702 - Coltype_deducer - DEBUG ---------------------------- 
+Output: ```json
+{
+  "city": "string"
+}
+```

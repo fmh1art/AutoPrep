@@ -1,7 +1,15 @@
 import copy
-from global_values import NAMES
+import global_values as GV
 import pandas as pd
 from src.tools.utils import *
+
+def filter_columns(df, columns=['column name 1', 'column name 3']):
+    # make sure the columns are in the dataframe
+    for col in columns:
+        if col not in df.columns:
+            raise ValueError(f'E(ext_col): {col} not in the dataframe')
+    # return the columns extracted
+    return df[columns]
 
 #! EXT_COL
 def extract_column(df, columns=['column name 1', 'column name 3']):
@@ -250,23 +258,25 @@ OP_FUNC_STRING = {
 }
 
 ARG_REQUIRED_DICT = {
-    NAMES['EXT_COL']: ['columns'],
-    NAMES['EXT_ROW']: ['condition', 'logical_relation'],
+    GV.NAMES['EXT_COL']: ['columns'],
+    GV.NAMES['EXT_ROW']: ['condition', 'logical_relation'],
 
-    NAMES['EXT_MAX_CONS_RECORD']: ['column', 'target_value'],
-    NAMES['SORT_BY']: ['column', 'ascending'],
-    NAMES['GROUP_STATISTICS']: ['group_by', 'metrics'],
+    GV.NAMES['EXT_MAX_CONS_RECORD']: ['column', 'target_value'],
+    GV.NAMES['SORT_BY']: ['column', 'ascending'],
+    GV.NAMES['GROUP_STATISTICS']: ['group_by', 'metrics'],
 
-    NAMES['GEN_NEW_COL']: ['new_column', 'func', 'source_cols'],
-    NAMES['EXT_COL']: ['new_column', 'func', 'source_cols'],
-    NAMES['CAL_COL']: ['new_column', 'func', 'source_cols'],
-    NAMES['BOOL_COL']: ['new_column', 'func', 'source_cols'],
-    NAMES['COMB_COL']: ['new_column', 'func', 'source_cols'],
+    GV.NAMES['GEN_NEW_COL']: ['new_column', 'func', 'source_cols'],
+    GV.NAMES['EXT_COL']: ['new_column', 'func', 'source_cols'],
+    GV.NAMES['CAL_COL']: ['new_column', 'func', 'source_cols'],
+    GV.NAMES['BOOL_COL']: ['new_column', 'func', 'source_cols'],
+    GV.NAMES['COMB_COL']: ['new_column', 'func', 'source_cols'],
 
-    NAMES['INF_COL']: ['new_column', 'func'],
+    GV.NAMES['INF_COL']: ['new_column', 'func'],
 
-    NAMES['REMOVE_SYMBOL']: ['column', 'symbol'],
-    NAMES['STAND_DATETIME']: ['column', 'format'],
-    NAMES['REMOVE_UNIT']: ['column', 'unit'],
-    NAMES['STAND_NUMERICAL']: ['column', 'func'],
+    GV.NAMES['REMOVE_SYMBOL']: ['column', 'symbol'],
+    GV.NAMES['STAND_DATETIME']: ['column', 'format'],
+    GV.NAMES['REMOVE_UNIT']: ['column', 'unit'],
+    GV.NAMES['STAND_NUMERICAL']: ['column', 'func'],
+
+    GV.NAMES['FILTER_COLUMNS']: ['columns'],
 }

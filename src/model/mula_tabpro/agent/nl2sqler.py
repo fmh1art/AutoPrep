@@ -2,7 +2,7 @@ from .simple_agent import *
 import sqlite3
 
 class NL2SQLer(Agent):
-    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='nl2sqler', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{TABLELLM_VERSION}.log'):
+    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='nl2sqler', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log'):
         super().__init__(llm_name=llm_name, chains=chains, PROMPT=PROMPT, agent_name=agent_name, logger_root=logger_root, logger_file=logger_file)
         self.conn = sqlite3.connect(':memory:')
 
@@ -19,13 +19,13 @@ class NL2SQLer(Agent):
         while True:
             prompt = self._ans_gen_prompt(data, instance_pool)
             out = self.gpt.query(prompt)
-            self.logger.log_message(line_limit=cut_log, level='debug', msg='Prompt: ' + prompt)
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Output: {out}')
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg='Prompt: ' + prompt)
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Output: {out}')
             try:
                 sql = parse_any_string(out, hard_replace='SQL:')
                 sql, _ = post_process_sql(sql, data.tbl, data.title)
                 ans = self.exe_sql(sql, data)
-                self.logger.log_message(line_limit=cut_log, level='debug', msg=f'tbl: {df_to_cotable(ans)}')
+                self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'tbl: {df_to_cotable(ans)}')
                 break
             except Exception as e:
                 self.sql = sql
@@ -76,7 +76,7 @@ class NL2SQLer(Agent):
                                  question=question,
                                  type=f'{self.name}-in_context_learning', 
                                  key=get_key_for_icl(question, list(tbl.columns), context=table_ret_tmp)),
-                    top_k=RETRIEVE_DEMO_NUM
+                    top_k=GV.RETRIEVE_DEMO_NUM
                 )
                 added_demos = [
                     delete_content_between(
@@ -111,7 +111,7 @@ class NL2SQLer(Agent):
                                         last_err=self.last_log,
                                         type=f'{self.name}-self_correction',
                                         key=self.last_log),
-                        top_k=SELF_CORRECTION_NUM
+                        top_k=GV.SELF_CORRECTION_NUM
                     )
 
                     added_demos = [SELF_CORREC_INS_NL2SQLER.format(
@@ -130,7 +130,7 @@ class NL2SQLer(Agent):
 
             
             prompt = demo + '\n\n' + query
-            if cal_tokens(prompt) <= MAX_INPUT_LIMIT-MAX_OUTPUT_LIMIT:
+            if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
                 create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
                 self.cur_ins = get_instance(
                     id = data.id, create_table=create_table_tmp, 

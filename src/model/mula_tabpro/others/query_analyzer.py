@@ -1,10 +1,10 @@
-from global_values import TABLELLM_VERSION
+import global_values as GV
 from src.data import TQAData
 from src.tools.logger import Logger
 from src.model.mula_tabpro.agent import Binder, ColTypeDeducer
 
 class QueryAnalyzer:
-    def __init__(self, llm_name='gpt-3.5-turbo-0301', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{TABLELLM_VERSION}.log'):
+    def __init__(self, llm_name='gpt-3.5-turbo-0301', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log'):
         self.name = 'Query Analyzer'
         self.llm_name = llm_name
         self.binder = Binder(llm_name=self.llm_name, logger_root=logger_root, logger_file=logger_file)

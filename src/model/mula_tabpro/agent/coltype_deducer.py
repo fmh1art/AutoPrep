@@ -1,7 +1,7 @@
 from .simple_agent import *
 
 class ColTypeDeducer(Agent):
-    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='coltype_deducer', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{TABLELLM_VERSION}.log'):
+    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='coltype_deducer', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log'):
         super().__init__(llm_name=llm_name, chains=chains, PROMPT=PROMPT, agent_name=agent_name, logger_root=logger_root, logger_file=logger_file)
 
     def process(self, data:TQAData, related_columns:List[str], sql: str, instance_pool:InstancePool=None):
@@ -17,8 +17,8 @@ class ColTypeDeducer(Agent):
                 prompt = self._ans_gen_prompt(data, related_columns, sql, instance_pool)
                 out = self.gpt.query(prompt)
 
-                self.logger.log_message(line_limit=cut_log, level='debug', msg='Prompt: ' + prompt)
-                self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Output: {out}')
+                self.logger.log_message(line_limit=GV.cut_log, level='debug', msg='Prompt: ' + prompt)
+                self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Output: {out}')
                 
                 coltype_dict = parse_coltype_dict(out)
                 if len(coltype_dict) == 0:
@@ -72,7 +72,7 @@ class ColTypeDeducer(Agent):
                     get_instance(
                         id=data.id, table=table_tmp, q=f'SQL: {sql}\nRelated Columns: {related_col_str}', type=f'{self.name}-in_context_learning'
                     ),
-                    top_k=RETRIEVE_DEMO_NUM
+                    top_k=GV.RETRIEVE_DEMO_NUM
                 )
                 
                 added_demos = [
@@ -104,7 +104,7 @@ class ColTypeDeducer(Agent):
                             q=f'SQL: {sql}\nRelated Columns: {related_col_str}',
                             last_err=self.last_log, type=f'{self.name}-self_correction'
                         ),
-                        top_k=SELF_CORRECTION_NUM
+                        top_k=GV.SELF_CORRECTION_NUM
                     )
 
                     added_demos = [SELF_CORREC_INS_DEDUCER.format(
@@ -121,7 +121,7 @@ class ColTypeDeducer(Agent):
             
             prompt = head + '\n\n' + demo + '\n\n' + query
             
-            if cal_tokens(prompt) <= MAX_INPUT_LIMIT-MAX_OUTPUT_LIMIT:
+            if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
                 table_tmp = df_to_str_columns(df=tbl, cut_line=3, exclude_cols=exclude_cols)
                 self.cur_ins = get_instance(id = data.id, table=table_tmp, 
                                             q=f'SQL: {sql}\nRelated Columns: {related_col_str}')

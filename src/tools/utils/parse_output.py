@@ -3,7 +3,7 @@ import re
 
 import pandas as pd
 
-from global_values import ord_pref, TASK_TYPE
+import global_values as GV
 
 def get_py_function_name(rsp):
     func_name = re.findall(r'def (.*?)\(', rsp)[0]
@@ -55,11 +55,11 @@ def parse_coltype_dict(s:str):
     return eval(s)
 
 def get_ord_prefix(num):
-    if num in ord_pref:
-        return ord_pref[num]
+    if num in GV.ord_pref:
+        return GV.ord_pref[num]
     else:
         last_number = num % 10
-        return ord_pref[last_number]
+        return GV.ord_pref[last_number]
 
 
 def modify_tabfact_answer(ret):
@@ -86,7 +86,7 @@ def extract_answers(sub_table: pd.DataFrame):
     else:
         ret = sub_table.values.flatten().tolist()
     
-    if TASK_TYPE == 'tablefact':
+    if GV.TASK_TYPE == 'tablefact':
         ret = modify_tabfact_answer(ret)
 
     return ret

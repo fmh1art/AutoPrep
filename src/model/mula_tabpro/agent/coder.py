@@ -1,7 +1,7 @@
 from .simple_agent import *
 
 class Coder(Agent):
-    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='coder', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{TABLELLM_VERSION}.log'):
+    def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='coder', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log'):
         super().__init__(llm_name=llm_name, chains=chains, PROMPT=PROMPT, agent_name=agent_name, logger_root=logger_root, logger_file=logger_file)
 
     def process(self, data:TQAData, requirement: str, cols:List[str]):
@@ -11,8 +11,8 @@ class Coder(Agent):
         while True:
             prompt = self._ans_gen_prompt(data, requirement, cols)
             out = self.gpt.query(prompt)
-            self.logger.log_message(line_limit=cut_log, level='debug', msg='Prompt: ' + prompt)
-            self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Output: {out}')
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg='Prompt: ' + prompt)
+            self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Output: {out}')
 
             code_str = parse_any_string(out, hard_replace='Code:')
             self.code = code_str
@@ -21,7 +21,7 @@ class Coder(Agent):
                 df = copy.deepcopy(data.tbl)
                 df = execute_code_from_string(code_str, df)
                 data.tbl = df
-                self.logger.log_message(line_limit=cut_log, level='debug', msg=f'tbl: {df_to_cotable(data.tbl)}')
+                self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'tbl: {df_to_cotable(data.tbl)}')
                 break
             except Exception as e:
                 self.code = code_str
@@ -52,7 +52,7 @@ class Coder(Agent):
             
             prompt = demo + '\n\n' + query
 
-            if cal_tokens(prompt) <= MAX_INPUT_LIMIT-MAX_OUTPUT_LIMIT:
+            if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
                 break
 
         if len(prompt) == 0:

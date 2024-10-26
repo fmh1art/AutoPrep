@@ -4,12 +4,12 @@ from typing import List
 import pandas as pd
 
 from src.tools.utils import *
-from global_values import *
+import global_values as GV
 
 from ..base import *
 
 class SimpleOperator(Operator):
-    def __init__(self, llm_model='gpt-3.5-turbo', op_type='simple_operator', log_root='tmp/table_llm_log', log_file=f'mula_tabpro_v{TABLELLM_VERSION}.log', PROMPT=None):
+    def __init__(self, llm_model='gpt-3.5-turbo', op_type='simple_operator', log_root='tmp/table_llm_log', log_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log', PROMPT=None):
         super().__init__(op_type)
         self.gpt = GPTPOOL(model=llm_model)
         self.logger = Logger(name=op_type, log_file=log_file, root=log_root)
@@ -36,7 +36,7 @@ class SimpleOperator(Operator):
         arg_val, func_str = self._parse_args(data, out)
         self.complete_func_str = func_str
 
-        self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Args: {arg_val}')
+        self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Args: {arg_val}')
         
         for k in self.required_args:
             if k not in arg_val:
@@ -50,13 +50,13 @@ class SimpleOperator(Operator):
         prompt = self._arg_gen_prompt(data.df, data.question)
         out = self.gpt.query(prompt)
 
-        self.logger.log_message(line_limit=cut_log, level='debug', msg='Prompt: ' + prompt)
-        self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Output: {out}')
+        self.logger.log_message(line_limit=GV.cut_log, level='debug', msg='Prompt: ' + prompt)
+        self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Output: {out}')
 
         arg_val, func_str = self._parse_args(data, out)
         self.complete_func_str = func_str
 
-        # self.logger.log_message(line_limit=cut_log, level='debug', msg=f'Args: {arg_val}')
+        # self.logger.log_message(line_limit=GV.cut_log, level='debug', msg=f'Args: {arg_val}')
         
         for k in self.required_args:
             if k not in arg_val:

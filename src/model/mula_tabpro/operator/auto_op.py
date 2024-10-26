@@ -1,14 +1,14 @@
 from src.tools.utils import parse_any_string
-from global_values import NAMES
+import global_values as GV
 from .generate_new_column import GenNewCol, ExtractColumn, CalculateColumn, BooleanColumn, CombineColumn
 
 class AutoOP:
     class_dic = {
-        NAMES['GEN_NEW_COL']: GenNewCol,
-        NAMES['EXT_COL']: ExtractColumn,
-        NAMES['CAL_COL']: CalculateColumn,
-        NAMES['BOOL_COL']: BooleanColumn,
-        NAMES['COMB_COL']: CombineColumn,
+        GV.NAMES['GEN_NEW_COL']: GenNewCol,
+        GV.NAMES['EXT_COL']: ExtractColumn,
+        GV.NAMES['CAL_COL']: CalculateColumn,
+        GV.NAMES['BOOL_COL']: BooleanColumn,
+        GV.NAMES['COMB_COL']: CombineColumn,
     }
 
     def deduce_op(op_str:str):

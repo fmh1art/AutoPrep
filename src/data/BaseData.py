@@ -1,8 +1,6 @@
 from typing import List
-import json
-import pandas as pd
 from src.tools.utils import *
-from global_values import *
+import pandas as pd
 
 class BaseData:
     def __init__(self, task_type:str):

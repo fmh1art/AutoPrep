@@ -3,12 +3,12 @@ import copy
 import pandas as pd
 from typing import List
 from src.tools.logger import Logger
-from global_values import NAMES, SELF_CORRECTION, RETRIEVE_DEMO
+import global_values as GV
 from src.llm.gpt_inference import GPTPOOL
 from src.data import TQAData
 
 class Operator(object):
-    def __init__(self, op_type=NAMES['EXT_COL']):
+    def __init__(self, op_type=GV.NAMES['EXT_COL']):
         self.args = {}
         self.type = op_type
         self.complete_func_str = None
@@ -31,7 +31,7 @@ class Operator(object):
 class Agent(object):
     def __init__(self, llm_name=None, chains = None, PROMPT = None, 
                  agent_name='BaseAgent', logger_root='./', logger_file=None, 
-                 self_correction=SELF_CORRECTION, retrieve_demo=RETRIEVE_DEMO):
+                 self_correction=GV.SELF_CORRECTION, retrieve_demo=GV.RETRIEVE_DEMO):
         self.gpt = GPTPOOL(model=llm_name)
         self.chains = chains
         self.PROMPT = PROMPT
@@ -91,9 +91,9 @@ class Agent(object):
         return tmp_ins
 
 class InitOP(Operator):
-    def __init__(self, op_type=NAMES['INIT'], llm_model=None):
+    def __init__(self, op_type=GV.NAMES['INIT'], llm_model=None):
         super().__init__(op_type)
     
 class EndOP(Operator):
-    def __init__(self, op_type=NAMES['END'], llm_model=None):
+    def __init__(self, op_type=GV.NAMES['END'], llm_model=None):
         super().__init__(op_type)

@@ -91,7 +91,9 @@ NAMES = {
     'REMOVE_SYMBOL': 'remove_noisy_symbol',
     'REMOVE_UNIT': 'remove_unit',
     'STAND_NUMERICAL': 'standardize_numerical',
+    'FILTER_COLUMNS': 'filter_columns',
 }
+
 
 EM_ENTITY_TYPE = {
     'abt_buy': 'Product',
@@ -225,7 +227,10 @@ DEMO_MODE = {
 
 EXT_REL_COL = True
 
-DATA_PATH = r'E:\data'
+# DATA_PATH = r'E:\data'
+# PROJ_PATH = r'E:\MulA_Tabpro'
+
+DATA_PATH = r'D:\1th-D\Firefly\RAG_LLM_DM\data'
 PROJ_PATH = r'E:\MulA_Tabpro'
 
 TABLELLM_VERSION = f'4.5-{TASK_TYPE}-{LLM_NAME.split("-")[0]}-selfc{SELF_CORRECTION_NUM}-retd{RETRIEVE_DEMO_NUM}-PreCheck{PRE_CHECK_GRAMMAR}-OP{OP_INSTEAD_OF_CODE}'

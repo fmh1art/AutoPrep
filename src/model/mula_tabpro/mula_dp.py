@@ -3,21 +3,46 @@ import pickle as pkl
 
 from typing import List, Tuple
 from src.tools.utils import *
-from global_values import *
+import global_values as GV
 from src.tools.logger import Logger
 from src.data import TQAData
 from src.model.mula_tabpro.agent import Binder, ViewGenerator, Imputater, ColTypeDeducer, Cleaner, Coder
+from src.model.mula_tabpro.operator import FilterColumns, SimpleOperator
+
+class LogicalOperator:
+    def __init__(self, op_type=None):
+        self.type = op_type
+
+class Augment(LogicalOperator):
+    def __init__(self, op_type='Augment', req:str="", rel_cols:List[str]=[]):
+        super().__init__(op_type)
+        self.req = req
+        self.rel_cols = rel_cols
+    
+class Normalize(LogicalOperator):
+    def __init__(self, op_type='Normalize', req:str="", col:str=''):
+        super().__init__(op_type)
+        self.req = req
+        self.col = col
+
+class Filter(LogicalOperator):
+    def __init__(self, op_type='Filter', rel_cols:List[str]=[]):
+        super().__init__(op_type)
+        self.rel_cols = rel_cols
+
 
 class MultiAgentDataPrep:
-    def __init__(self, llm_name:str, logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{TABLELLM_VERSION}.log', temp_data_path = MULTIA_TEMP_DATA_PATH):
+    def __init__(self, llm_name=GV.LLM_NAME, logger_root='tmp/table_llm_log', 
+                 logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log', 
+                 temp_data_path = GV.MULTIA_TEMP_DATA_PATH):
         self.llm_name = llm_name
-        self.binder = Binder(llm_name=LLM_DICT['binder'], logger_root=logger_root, logger_file=logger_file)
-        self.view_gen = ViewGenerator(llm_name=LLM_DICT['view_generator'], logger_root=logger_root, logger_file=logger_file)
-        self.imputater = Imputater(llm_name=LLM_DICT['imputater'], logger_root=logger_root, logger_file=logger_file)
-        self.coltype_deducer = ColTypeDeducer(llm_name=LLM_DICT['coltype_deducer'], logger_root=logger_root, logger_file=logger_file)
-        self.cleaner = Cleaner(llm_name=LLM_DICT['cleaner'], logger_root=logger_root, logger_file=logger_file)
+        self.binder = Binder(llm_name=GV.LLM_DICT['binder'], logger_root=logger_root, logger_file=logger_file)
+        self.view_gen = ViewGenerator(llm_name=GV.LLM_DICT['view_generator'], logger_root=logger_root, logger_file=logger_file)
+        self.imputater = Imputater(llm_name=GV.LLM_DICT['imputater'], logger_root=logger_root, logger_file=logger_file)
+        self.coltype_deducer = ColTypeDeducer(llm_name=GV.LLM_DICT['coltype_deducer'], logger_root=logger_root, logger_file=logger_file)
+        self.cleaner = Cleaner(llm_name=GV.LLM_DICT['cleaner'], logger_root=logger_root, logger_file=logger_file)
         self.logger = Logger(name='MultiAgentDataPrep', root=logger_root, log_file=logger_file)
-        self.coder = Coder(llm_name=LLM_DICT['cleaner'], logger_root=logger_root, logger_file=logger_file)
+        self.coder = Coder(llm_name=GV.LLM_DICT['cleaner'], logger_root=logger_root, logger_file=logger_file)
 
         self.temp_data_path = temp_data_path
         self.self_corr_inses = []
@@ -161,11 +186,126 @@ class MultiAgentDataPrep:
 
         self.log_info['related_columns'] = related_columns
         # 4. return the processed data
-        if len(related_columns) != 0 and EXT_REL_COL:
+        if len(related_columns) != 0 and GV.EXT_REL_COL:
             self.data.tbl = self.data.tbl[related_columns]
 
         return self.data, self.log_info
     
+    def generate_logical_plan(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
+        logical_plan = []
+        self.data = data
+        self.log_info = {}
+        print(GV.debug)
+        # 0. base_cleaning
+        self.data.tbl,_ = base_clean_dataframe(self.data.tbl)
+
+        origin_cols = list(self.data.tbl.columns)
+
+        # 1. get the binder program: extract the [related columns] and the [mapping requirement(s)]
+        related_columns, mapping_requirements, binder_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, binder_vote_cnt=binder_vote_cnt)
+        related_columns = sorted([x for x in related_columns if x in origin_cols], key=lambda x: origin_cols.index(x))
+        
+        for requirement, cols in mapping_requirements:
+            logical_plan.append(Augment(req=requirement, rel_cols=list(cols)))
+
+        coltype_dict = self._get_coltype_dict(self.data, related_columns, binder_sqls[-1], coltype_vote, instance_pool)
+        for col, ctype in coltype_dict.items():
+            if ctype in ['datetime', 'numerical']:
+                logical_plan.append(Normalize(req=f'Cast to {ctype} type.', col=col))
+
+        logical_plan.append(Filter(rel_cols=related_columns))
+        
+        return logical_plan, binder_sqls[-1]
+    
+    def execute_physical_plan(self, data:TQAData, physical_plan:List[SimpleOperator]):
+        self.data = data
+
+        # return {'new_column': new_column, 'func': func, 'source_cols': source_cols}, op_str
+        col_map = {}
+        for type, physic_op in physical_plan:
+            old_op = copy.deepcopy(physic_op)
+            if type == 'Augment':
+                self.data, new_op = self.view_gen.execute_physical_op(self.data, physic_op.args['source_cols'], physic_op.req, physic_op)
+                old_newcol = old_op.args['new_column']
+                new_newcol = new_op.args['new_column']
+                if old_newcol != new_newcol:
+                    col_map[old_newcol] = new_newcol
+            elif type == 'Normalize':
+                self.data, new_op = self.cleaner.execute_physical_op(self.data, physic_op.args['column'], 'datetime' if physic_op.type==GV.NAMES['STAND_DATETIME'] else 'numerical', physic_op)
+            elif type == 'Filter':
+                rel_cols = physic_op.args['columns']
+                if len(col_map) > 0:
+                    rel_cols = [col_map[col] if col in col_map else col for col in rel_cols]
+                    physic_op.complete_args_with_output(self.data, 'filter_columns(df, columns=[{}])'.format(', '.join([f'"{col}"' for col in rel_cols])))
+                    physic_op.args['columns'] = rel_cols
+                self.data = physic_op.execute(self.data)
+            else:
+                raise ValueError(f'Unknown physical operator: {type}')
+        return self.data
+                
+    
+    def generate_physical_plan(self, data:TQAData, logical_plan:List[LogicalOperator], binder_sql):
+        self.data = data
+
+        physical_plan = []
+
+        # Find Filter Operator
+        filter_op = None
+        for logic_op in logical_plan:
+            if isinstance(logic_op, Filter):
+                filter_op = logic_op
+                break
+        
+        new_gened_cols = []
+
+        for logic_op in logical_plan:
+                
+                # generate physical operator for Augment
+                if isinstance(logic_op, Augment):
+                    try:
+                        req = logic_op.req
+                        cols = logic_op.rel_cols
+                        physic_op = None
+                        # self.data, physic_op = self.view_gen.generate_column_from_columns(self.data, cols, req)
+                        physic_op = self.view_gen.get_physical_op(self.data, cols, req)
+                        physic_op.req = req
+                        physical_plan.append((logic_op.type, physic_op))
+                        # self.data = self.imputater.col_generate_imputate(self.data, physic_op, binder_sql)
+                        new_col = physic_op.args['new_column']
+                        if new_col not in filter_op.rel_cols:
+                            new_gened_cols.append(new_col)
+                    except Exception as e:
+                        self.logger.log_message(level='error', msg=f'E: Error raised in generating column: {e}')
+                        continue
+                # generate physical operator for Normalize
+                elif isinstance(logic_op, Normalize):
+                    try:
+                        req = logic_op.req
+                        col = logic_op.col
+                        physic_op = None
+                        ctype = 'datetime' if 'datetime' in req else 'numerical'
+                        # self.data, physic_op = self.cleaner.standardize_coltype(self.data, col, ctype)
+                        physic_op = self.cleaner.get_physical_op(self.data, col, ctype)
+                        physical_plan.append((logic_op.type, physic_op))
+                        # self.data = self.imputater.standardize_imputate(self.data, col, ctype, sql=binder_sql)
+                    except Exception as e:
+                        self.logger.log_message(level='error', msg=f'E: Error raised in standardizing column: {e}')
+                        continue
+                elif isinstance(logic_op, Filter):
+                    pass
+                else:
+                    raise ValueError(f'Unknown logic_op: {logic_op.type}')
+
+        # update LogicalOperator Filter
+        if len(new_gened_cols) > 0:
+            filter_op.rel_cols = filter_op.rel_cols + new_gened_cols
+
+        filter_physical_op = FilterColumns()
+        filter_physical_op.complete_args_with_output(self.data, 'filter_columns(df, columns=[{}])'.format(', '.join([f'"{col}"' for col in filter_op.rel_cols])))
+        physical_plan.append(('Filter', filter_physical_op))
+
+        return physical_plan
+        
 
     def process(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
         self.data = data
@@ -173,7 +313,7 @@ class MultiAgentDataPrep:
         self.self_corr_inses = []
         # 0. base_cleaning
         self.data.tbl,_ = base_clean_dataframe(self.data.tbl)
-            
+
         origin_cols = list(self.data.tbl.columns)
 
         # 1. get the binder program: extract the [related columns] and the [mapping requirement(s)]
@@ -251,7 +391,7 @@ class MultiAgentDataPrep:
 
         self.log_info['related_columns'] = related_columns
         # 4. return the processed data
-        if len(related_columns) != 0 and EXT_REL_COL:
+        if len(related_columns) != 0 and GV.EXT_REL_COL:
             self.data.tbl = self.data.tbl[related_columns]
 
         self.self_corr_inses = self.binder.self_corr_inses + self.view_gen.self_corr_inses + self.imputater.self_corr_inses + self.coltype_deducer.self_corr_inses + self.cleaner.self_corr_inses

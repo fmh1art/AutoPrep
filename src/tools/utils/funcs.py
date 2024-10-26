@@ -7,7 +7,7 @@ import pandas as pd
 import tiktoken, tqdm
 
 from src.data import TQAData
-from global_values import DATASETS
+import global_values as GV
 import multiprocessing
 from multiprocessing import Lock
 import pickle

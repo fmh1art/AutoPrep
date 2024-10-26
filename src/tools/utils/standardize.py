@@ -5,18 +5,17 @@ from fuzzywuzzy import fuzz
 from nltk import word_tokenize
 
 from dataprep.clean import clean_headers, clean_text
-from global_values import *
+import global_values as GV
 
 from Levenshtein import ratio
 
-
-def check_similarity(df, row1, row2, threshold=TYPE_DEDUCE_RATIO):
+def check_similarity(df, row1, row2, threshold=GV.TYPE_DEDUCE_RATIO):
     return all(
         ratio(str(row1[attr]), str(row2[attr])) > threshold for attr in df.columns
     )
 
 # 
-def get_all_similar_pairs(df, threshold=TYPE_DEDUCE_RATIO):
+def get_all_similar_pairs(df, threshold=GV.TYPE_DEDUCE_RATIO):
 
     # Find all pairs of records with similarity above 0.9 for all attributes
     similar_pairs = []
@@ -201,9 +200,9 @@ def _parse_symbol_elements(format_str):
         if format_str[i] == "%":
             if i < len(format_str) - 1:
                 ele = format_str[i + 1]
-                if ele in DATE_SYMBOLS_SORT:
+                if ele in GV.DATE_SYMBOLS_SORT:
                     date_elememts.append(ele)
-                if ele in TIME_SYMBOLS_SORT:
+                if ele in GV.TIME_SYMBOLS_SORT:
                     time_elements.append(ele)
     return date_elememts, time_elements
 
@@ -221,8 +220,8 @@ def _get_new_format(original_format):
         date_elememts.remove("B")
         date_elememts.append("m")
 
-    date_elememts = sorted(date_elememts, key=lambda x: DATE_SYMBOLS_SORT.index(x))
-    time_elements = sorted(time_elements, key=lambda x: TIME_SYMBOLS_SORT.index(x))
+    date_elememts = sorted(date_elememts, key=lambda x: GV.DATE_SYMBOLS_SORT.index(x))
+    time_elements = sorted(time_elements, key=lambda x: GV.TIME_SYMBOLS_SORT.index(x))
     date_format = "-".join([f"%{ele}" for ele in date_elememts])
     time_format = ":".join([f"%{ele}" for ele in time_elements if ele in "HIMS"])
     if "p" in time_elements:
@@ -297,7 +296,7 @@ def _base_clean_columns(df: pd.DataFrame):
     df.columns = [
         str(col).replace("$", " dollar ").replace("–", "-").replace('\\n', '_') for col in df.columns
     ]
-    df = clean_headers(df, remove_accents=True, replace=SPECIAL_CHAR_DICT)
+    df = clean_headers(df, remove_accents=True, replace=GV.SPECIAL_CHAR_DICT)
     # if column name is empty, replace it with 'col_i'
     i = 1
     for col in df.columns:
@@ -349,7 +348,7 @@ def standardization(df: pd.DataFrame):
     col_trans = {}
     for col in df.columns:
         num_rat = numerical_ratio(df, col)
-        if num_rat > TYPE_DEDUCE_RATIO:
+        if num_rat > GV.GV.TYPE_DEDUCE_RATIO:
             # try to convert the column to numerical
             df = standardize_to_numerical(df, col)
             col_trans[col] = "numerical"
@@ -366,7 +365,7 @@ def my_date(value, format="%Y-%m-%d %H:%M:%S"):
         if "th" in value or "st" in value or "rd" in value or "nd" in value:
             raise ValueError(f"Cannot convert {value} to date")
 
-    if value.lower().strip() in WEEKDAY_DIC:
+    if value.lower().strip() in GV.WEEKDAY_DIC:
         raise ValueError(f"Cannot convert {value} to date")
 
     if value.count("-") == 1:
@@ -492,7 +491,7 @@ def basic_fix(sql_str, all_headers, table_title=None, mark='`'):
     # match headers
     matched_headers = []
     for header in all_headers:
-        if (header in sql_str) and (header not in ALL_KEY_WORDS):
+        if (header in sql_str) and (header not in GV.ALL_KEY_WORDS):
             all_matched_of_this_header = finditer(header, sql_str)
             if len(all_matched_of_this_header) == 0:
                 continue
@@ -616,7 +615,7 @@ def fuzzy_match_process(sql_str, df, verbose=False):
             fixed_sql_template_tokens.append(sql_templ_tok)
     sql_template_tokens = fixed_sql_template_tokens
     for idx, tok in enumerate(sql_tokens):
-        if tok in ALL_KEY_WORDS:
+        if tok in GV.ALL_KEY_WORDS:
             sql_tokens[idx] = tok.upper()
 
     if verbose:
@@ -732,27 +731,27 @@ def extract_partial_template_from_sql(sql, schema={}):
                 # template.append("[FROM_PART]")
                 idx += 1
                 while idx < len_ and (
-                    toks[idx] not in CLAUSE_KEYWORDS and toks[idx] != ")"
+                    toks[idx] not in GV.CLAUSE_KEYWORDS and toks[idx] != ")"
                 ):
                     template.append(toks[idx])
                     idx += 1
                 continue
-        elif tok in CLAUSE_KEYWORDS:
+        elif tok in GV.CLAUSE_KEYWORDS:
             template.append(tok)
-        elif tok in AGG_OPS:
+        elif tok in GV.AGG_OPS:
             template.append(tok)
         elif tok in [",", "*", "(", ")", "having", "by", "distinct"]:
             template.append(tok)
         elif tok in ["asc", "desc"]:
             template.append("[ORDER_DIRECTION]")
-        elif tok in WHERE_OPS:
-            if tok in KEPT_WHERE_OP:
+        elif tok in GV.WHERE_OPS:
+            if tok in GV.KEPT_WHERE_OP:
                 template.append(tok)
             else:
                 template.append("[WHERE_OP]")
                 if tok == "between":
                     idx += 2
-        elif tok in COND_OPS:
+        elif tok in GV.COND_OPS:
             template.append(tok)
         elif template[-1] == "[WHERE_OP]":
             template.append("[VALUE]")

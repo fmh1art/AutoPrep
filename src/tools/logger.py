@@ -1,7 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 import os
-from global_values import debug, cut_log
+import global_values as GV
 
 class Logger:
     def __init__(self, name, level=logging.DEBUG, log_file="app.log", root='./'):
@@ -58,8 +58,8 @@ class Logger:
 
         return new_prompt
     
-    def log_message(self, level='debug', msg='', line_limit=cut_log):
-        if not debug or self.log_silent:
+    def log_message(self, level='debug', msg='', line_limit=GV.cut_log):
+        if not GV.debug or self.log_silent:
             return
         lines = str(msg).split('\n')    
         if line_limit and self.MAX_LINES>0 and len(lines) > self.MAX_LINES:
