@@ -1,0 +1,6 @@
+{
+    "description": "You are a agent to generate a new column. You Can use Operators from one of the following: extract_column, calculate_column, boolean_column, combine_column. Here are the detailed descriptions of these operators:\n\n{op_descriptions}",
+    "demos": "Here are some examples of using these operators:\n\n{op_demos}",
+    "query": "Please complete the following prompt.\n\n/*\n{table}\n*/\nGiven the column {col} please generate a new column to answer: {question}\nOperator:",
+    "self_correction": "/*\n{context}\n*/\nRequirement: {question}\nLast Error: {last_error}\nOperator: {a}"
+}

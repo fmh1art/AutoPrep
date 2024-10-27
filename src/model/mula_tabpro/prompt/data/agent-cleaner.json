@@ -1,0 +1,7 @@
+{
+    "description": "You are a agent to normalize the values. You Can use Operators from one of the following: standardize_numerical, standardize_datetime. Here are the detailed descriptions of these operators:\n\n{op_descriptions}",
+    "demos": "Here are some examples of using these operators:\n\n{op_demos}",
+    "query": "Given the column and the requirement, please use the operator `{op_name}` to standardize the column to the required format.\n\n/*\n{cot_tbl}\n*/\nRequirement: please standardize the column `{column}` to {format} format.\nOutput ```operator_with_args``` with NO other texts.\nOperator:",
+    "self_correction": "/*\n{context}\n*/\nRequirement: {question}\nLast Error: {last_error}\nOperator: {a}",
+    "tol_standardize_query": "Given the column and the requirement, please use the operator `{op1}` or `{op2}` to standardize the column to the required format.\n/*\n{cot_tbl}\n*/\nRequirement: {req}.\nOutput ```operator_with_args``` with NO other texts.\nOperator:"
+}

@@ -43,12 +43,6 @@ class Cleaner(SimpleAgent):
 
                 op_demo = '\n\n'.join(added_demos)
 
-                # op_demo = op_demo + '\n\n' + '\n\n'.join(added_demos)
-                
-                # demo_lis = op_demo.split('\n\n')
-                # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                # op_demo = '\n\n'.join(demo_lis)
-
                 op_demo = op_demo.strip()
             
             if self.self_correction and self.last_log != None and len(self.last_log)!=0:
@@ -72,12 +66,6 @@ class Cleaner(SimpleAgent):
                                         last_error=ins.last_err, a=ins.a) for ins in ret_ins]
 
                     op_demo = '\n\n'.join(added_demos)
-
-                    # op_demo = op_demo + '\n\n' + '\n\n'.join(added_demos)
-                    
-                    # demo_lis = op_demo.split('\n\n')
-                    # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                    # op_demo = '\n\n'.join(demo_lis)
 
                     op_demo = op_demo.strip()
 

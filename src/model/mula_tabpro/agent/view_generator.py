@@ -39,12 +39,6 @@ class ViewGenerator(SimpleAgent):
                 ]
 
                 op_demo = '\n\n'.join(added_demos)
-                    
-                # op_demo = op_demo + '\n\n' + '\n\n'.join(added_demos)
-
-                # demo_lis = op_demo.split('\n\n')
-                # demo_lis = [demo_lis[0]] + added_demos + demo_lis[1:]
-                # op_demo = '\n\n'.join(demo_lis)
 
                 op_demo = op_demo.strip()
 
