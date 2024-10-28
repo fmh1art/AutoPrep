@@ -1,9 +1,0 @@
-{% extends "layout/base.html" %}
-{% block title %}Clean Data{% endblock %}
-{% block content %}
-<h2>Clean Data</h2>
-<div class="table-responsive mt-4">
-    {{ data | safe }}
-</div>
-<a href="{{ url_for('code_result') }}" class="btn btn-success mt-4">Generate Code and Extract Answer</a>
-{% endblock %}

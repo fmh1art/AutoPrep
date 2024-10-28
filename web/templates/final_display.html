@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Final Display</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Final Data</h1>
+        <h2>Question: {{ question }}</h2>
+        <div>{{ data|safe }}</div>
+        <h2>Generated Code to Extract Answer:</h2>
+        <pre>{{ extraction_code }}</pre>
+        {% if final_answer %}
+        <h2>Final Answer:</h2>
+        <div>{{ final_answer|safe }}</div>
+        {% endif %}
+    </div>
+</body>
+</html>

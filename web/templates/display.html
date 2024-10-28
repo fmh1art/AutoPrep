@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Display Data</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Tabular Question Answering Instance</h1>
+        <h2>Question: {{ question }}</h2>
+        <div>{{ data|safe }}</div>
+        <form method="POST" action="/examine">
+            <button type="submit">Examine Data Quality</button>
+        </form>
+    </div>
+
+    {% if logical_operators or physical_operators %}
+    <div class="container">
+        <h2>Logical Operators:</h2>
+        <ul>
+            {% for operator in logical_operators %}
+            <li>{{ operator }}</li>
+            {% endfor %}
+        </ul>
+        <form method="POST" action="/implement">
+            <button type="submit">Implement Logical Operators</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if physical_operators %}
+    <div class="container">
+        <h2>Physical Operators:</h2>
+        <ul>
+            {% for i in range(physical_operators|length) %}
+            <li>
+                <input type="checkbox" {% if physical_operator_status[i] %}checked{% endif %} disabled> {{ physical_operators[i] }}
+            </li>
+            {% endfor %}
+        </ul>
+        <form method="POST" action="/execute">
+            <button type="submit">Execute Next Operator</button>
+        </form>
+        <form method="POST" action="/reset">
+            <button type="submit">Reset Execution</button>
+        </form>
+        <h3>Current Operator Index: {{ current_operator_index }}</h3>
+    </div>
+    {% endif %}
+</body>
+</html>

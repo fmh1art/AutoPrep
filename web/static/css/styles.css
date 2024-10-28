@@ -2,15 +2,25 @@
 body {
     padding-top: 20px;
     background-color: #f8f9fa;
+    font-family: 'Arial', sans-serif;
 }
 
 .container {
     max-width: 800px;
     margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
+h1, h2 {
     color: #343a40;
+    text-align: center;
+}
+
+h3 {
+    color: #007bff;
 }
 
 .navbar-brand, .nav-link {
@@ -21,10 +31,42 @@ h2 {
     margin-top: 20px;
 }
 
-.footer {
+footer {
     margin-top: 20px;
     padding: 10px;
     text-align: center;
     background-color: #343a40;
     color: #ffffff;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 10px 0;
+}
+
+input[type="file"],
+input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
