@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Code Result{% endblock %}
+
+{% block content %}
+<h2>Generated Code</h2>
+<pre class="bg-light p-3">{{ code }}</pre>
+
+<h2>Extracted Answer</h2>
+<p class="mt-3">{{ answer }}</p>
+<a href="{{ url_for('upload') }}" class="btn btn-info mt-3">Back to Upload</a>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Function Options{% endblock %}
+
+{% block content %}
+<h2>Function Options for Issue {{ issue_id }}</h2>
+<ul class="list-group mt-4">
+    {% for option in options %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            {{ option }}
+            <a href="{{ url_for('apply_function', issue_id=issue_id, function_id=loop.index) }}" class="btn btn-sm btn-primary">Apply</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}
