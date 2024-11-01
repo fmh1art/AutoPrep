@@ -255,11 +255,11 @@ class MultiAgentDataPrep:
             if isinstance(logic_op, Filter):
                 filter_op = logic_op
                 break
-        
+
         new_gened_cols = []
 
         for logic_op in logical_plan:
-                
+
                 # generate physical operator for Augment
                 if isinstance(logic_op, Augment):
                     try:

@@ -1,21 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Final Display</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Display Data</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
 <body>
-    <div class="container">
-        <h1>Final Data</h1>
-        <h2>Question: {{ question }}</h2>
-        <div>{{ data|safe }}</div>
-        <h2>Generated Code to Extract Answer:</h2>
-        <pre>{{ extraction_code }}</pre>
-        {% if final_answer %}
-        <h2>Final Answer:</h2>
-        <div>{{ final_answer|safe }}</div>
-        {% endif %}
+    <div class="container" style="position: relative;">
+        <h1><img src="../static/images/user.svg" style="width: 40px; height: 40px; margin-right: 5px;"> Tabular Question Answering Instance </h1>
+        <h3>Question: {{ question }}</h3>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        {% for column in data.columns %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index, row in data.iterrows() %}
+                    <tr>
+                        {% for item in row %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <form method="POST" action="/generate_code" class="next-button" id="generate-code-form">
+            <button type="submit" id="generate-code-button" style="border: none; background: none; padding: 0;">
+                <img src="{{ url_for('static', filename='../static/images/next.svg') }}" id="generate-code-image" style="width: 40px; height: 40px;">
+            </button>
+            <div class="spinner" id="generate-code-spinner"></div>
+        </form>
     </div>
+    
+    {% if extraction_code %}
+    <div class="container" style="position: relative;">
+        <h1><img src="../static/images/analyzer.svg" style="width: 40px; height: 40px; margin-right: 5px;">Generated Code</h1>
+        <pre>{{ extraction_code }}</pre>
+    </div>
+    {% endif %}
+    {% if final_answer %}
+    <div class="container" style="position: relative;">
+        <h1><img src="../static/images/answer.svg" style="width: 30px; height: 30px; margin-right: 5px;">Answer</h1> <div>{{ final_answer|safe }}</div>
+    </div>
+    {% endif %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#generate-code-form').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var button = $('#generate-code-button');
+            var spinner = $('#generate-code-spinner');
+            button.hide();
+            spinner.show();
+            $.ajax({
+                url: form.attr('action'),
+                type: form.attr('method'),
+                data: form.serialize(),
+                success: function(response) {
+                    $('body').html(response);
+                },
+                error: function() {
+                    button.show();
+                    spinner.hide();
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>

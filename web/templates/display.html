@@ -1,37 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Display Data</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Display Data</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
 <body>
-    <div class="container">
-        <h1>Tabular Question Answering Instance</h1>
-        <h2>Question: {{ question }}</h2>
-        <div>{{ data|safe }}</div>
-        <form method="POST" action="/examine">
-            <button type="submit">Examine Data Quality</button>
+    <div class="container" style="position: relative;">
+        <h1><img src="../static/images/user.svg" style="width: 40px; height: 40px; margin-right: 5px;"> Tabular Question Answering Instance </h1>
+        <h3>Question: {{ question }}</h3>
+        {% if physical_operator_status and physical_operator_status[-1] %}
+        <div class="alert alert-success" role="alert">
+            Table updated after executing: {{ physical_operators[current_operator_index-1] }}
+        </div>
+        {% endif %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        {% for column in data.columns %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for index, row in data.iterrows() %}
+                    <tr>
+                        {% for item in row %}
+                        <td>{{ item }}</td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <form method="POST" action="/examine" class="next-button" id="examine-form">
+            <button type="submit" id="examine-button" style="border: none; background: none; padding: 0;">
+                <img src="{{ url_for('static', filename='../static/images/next.svg') }}" id="examine-image" style="width: 40px; height: 40px;">
+            </button>
+            <div class="spinner" id="examine-spinner"></div>
         </form>
     </div>
-
+    
     {% if logical_operators or physical_operators %}
-    <div class="container">
-        <h2>Logical Operators:</h2>
+    <div id="logical-operators" class="container" style="position: relative;">
+        <h1><img src="../static/images/planner.svg" style="width: 40px; height: 40px; margin-right: 5px;"> Logical Operators </h1>
         <ul>
             {% for operator in logical_operators %}
             <li>{{ operator }}</li>
             {% endfor %}
         </ul>
-        <form method="POST" action="/implement">
-            <button type="submit">Implement Logical Operators</button>
+        
+        <form method="POST" action="/implement" class="next-button" id="implement-form">
+            <button type="submit" id="implement-button" style="border: none; background: none; padding: 0;">
+                <img src="{{ url_for('static', filename='../static/images/next.svg') }}" id="implement-image" style="width: 40px; height: 40px;">
+            </button>
+            <div class="spinner" id="implement-spinner"></div>
         </form>
     </div>
     {% endif %}
-
     {% if physical_operators %}
-    <div class="container">
-        <h2>Physical Operators:</h2>
+    <div class="container" style="position: relative;">
+        <h1><img src="../static/images/normalizer.svg" style="width: 40px; height: 40px; margin-right: 5px;">Physical Operators</h1>
         <ul>
             {% for i in range(physical_operators|length) %}
             <li>
@@ -39,14 +69,47 @@
             </li>
             {% endfor %}
         </ul>
-        <form method="POST" action="/execute">
-            <button type="submit">Execute Next Operator</button>
+        
+        <form method="POST" action="/execute" class="next-button" id="execute-form">
+            <button type="submit" id="execute-button" style="border: none; background: none; padding: 0;">
+                <img src="{{ url_for('static', filename='../static/images/next.svg') }}" id="execute-image" style="width: 40px; height: 40px;">
+            </button>
+            <div class="spinner" id="execute-spinner"></div>
         </form>
-        <form method="POST" action="/reset">
-            <button type="submit">Reset Execution</button>
-        </form>
-        <h3>Current Operator Index: {{ current_operator_index }}</h3>
+        
+        <pre>Current Operator Index: {{ current_operator_index }}</pre>
     </div>
     {% endif %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        function handleFormSubmit(formId, buttonId, spinnerId) {
+            $('#' + formId).on('submit', function(e) {
+                e.preventDefault();
+                var form = $(this);
+                var button = $('#' + buttonId);
+                var spinner = $('#' + spinnerId);
+                button.hide();
+                spinner.show();
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        $('body').html(response);
+                    },
+                    error: function() {
+                        button.show();
+                        spinner.hide();
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        }
+        handleFormSubmit('examine-form', 'examine-button', 'examine-spinner');
+        handleFormSubmit('implement-form', 'implement-button', 'implement-spinner');
+        handleFormSubmit('execute-form', 'execute-button', 'execute-spinner');
+    });
+    </script>
 </body>
 </html>

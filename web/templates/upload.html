@@ -2,16 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Upload File</title>
+    <title>Upload Data</title>
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Upload a File</h1>
+    <div class="container" style="position: relative;">
         <form method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" required>
-            <input type="text" name="question" placeholder="Enter your question" required>
-            <button type="submit">Submit</button>
+            <h1><img src="../static/images/user.svg" style="width: 40px; height: 40px; margin-right: 5px;"> Upload the Table and Question</h1>
+            <!-- put these horizontally. set the space to 10px-->
+            <div class="form-group" style="display: flex; flex-direction: row;">
+                <input style="width: 30%;" type="file" class="form-control-file" name="file" required>
+                <input style="width: 70%;" type="text" name="question" placeholder="Enter your question" required>
+            </div>
+
+            <form method="POST" action="/submit">
+                <button type="next" style="border: none; background: none; padding: 0; position: absolute; right: 20px; top: 20px;">
+                    <img src="{{ url_for('static', filename='../static/images/next.svg') }}" style="width: 40px; height: 40px;">
+                </button>
+            </form>
         </form>
     </div>
 </body>

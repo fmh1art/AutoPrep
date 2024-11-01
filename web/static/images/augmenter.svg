@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- 由 Microsoft Visio, SVG Export 生成 augmenter.svg 页-1 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="1.19198in" height="1.50379in"
+		viewBox="0 0 85.8224 108.273" xml:space="preserve" color-interpolation-filters="sRGB" class="st8">
+	<v:documentProperties v:langID="2052" v:metric="true" v:viewMarkup="false"/>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#ccd1d9;stroke:#bfbfbf;stroke-width:0.25}
+		.st2 {fill:#e6e9ed;stroke:#bfbfbf;stroke-width:0.25}
+		.st3 {fill:#f5f7fa;stroke:#bfbfbf;stroke-width:0.25}
+		.st4 {fill:#c00000;stroke:#bfbfbf;stroke-width:0.25}
+		.st5 {fill:#ff0000;stroke:#bfbfbf;stroke-width:0.25}
+		.st6 {fill:#434a54;stroke:#bfbfbf;stroke-width:0.25}
+		.st7 {fill:#656d78;stroke:#bfbfbf;stroke-width:0.25}
+		.st8 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
+		<title>页-1</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<g id="group27-1" transform="translate(0.25,-0.25)" v:mID="27" v:groupContext="group">
+			<title>工作表.27</title>
+			<g id="shape28-2" v:mID="28" v:groupContext="shape" transform="translate(40.4148,-74.14)">
+				<title>工作表.28</title>
+				<path d="M0 81.38 L4.49 81.38 L4.49 108.27 L0 108.27 L0 81.38 Z" class="st1"/>
+			</g>
+			<g id="shape29-4" v:mID="29" v:groupContext="shape" transform="translate(8.9822,1.42109E-14)">
+				<title>工作表.29</title>
+				<path d="M33.68 31.93 C15.08 31.93 0 47.01 0 65.61 L0 108.27 L67.36 108.27 L67.36 65.61 C67.36 47.01 52.28 31.93
+							 33.68 31.93 Z" class="st2"/>
+			</g>
+			<g id="shape30-6" v:mID="30" v:groupContext="shape" transform="translate(35.9254,-94.3013)">
+				<title>工作表.30</title>
+				<path d="M0 101.54 A6.7358 6.7358 -180 1 0 13.47 101.54 A6.7358 6.7358 -180 0 0 0 101.54 Z" class="st2"/>
+			</g>
+			<g id="shape31-8" v:mID="31" v:groupContext="shape" transform="translate(20.2074,-33.679)">
+				<title>工作表.31</title>
+				<path d="M8.98 108.27 C4.03 108.27 0 104.24 0 99.29 C0 94.34 4.03 90.31 8.98 90.31 L35.93 90.31 C40.88 90.31 44.91
+							 94.34 44.91 99.29 C44.91 104.24 40.88 108.27 35.93 108.27 L8.98 108.27 Z" class="st3"/>
+			</g>
+			<g id="shape32-10" v:mID="32" v:groupContext="shape" transform="translate(17.9644,-31.436)">
+				<title>工作表.32</title>
+				<path d="M38.17 85.82 L11.23 85.82 C5.03 85.82 0 90.85 0 97.05 C0 103.25 5.03 108.27 11.23 108.27 L38.17 108.27 C44.37
+							 108.27 49.39 103.25 49.39 97.05 C49.39 90.85 44.37 85.82 38.17 85.82 ZM38.17 103.78 L11.23 103.78 C7.51
+							 103.78 4.49 100.76 4.49 97.05 C4.49 93.33 7.51 90.31 11.23 90.31 L38.17 90.31 C41.88 90.31 44.9 93.33
+							 44.9 97.05 C44.9 100.76 41.88 103.78 38.17 103.78 Z" class="st4"/>
+			</g>
+			<g id="shape33-12" v:mID="33" v:groupContext="shape" transform="translate(26.9432,-40.4148)">
+				<title>工作表.33</title>
+				<path d="M29.19 103.78 L2.25 103.78 C1.01 103.78 0 104.79 0 106.03 C0 107.27 1.01 108.27 2.25 108.27 L29.19 108.27
+							 C30.43 108.27 31.44 107.27 31.44 106.03 C31.44 104.79 30.43 103.78 29.19 103.78 Z" class="st5"/>
+			</g>
+			<g id="shape34-14" v:mID="34" v:groupContext="shape" transform="translate(0,-26.9432)">
+				<title>工作表.34</title>
+				<path d="M4.49 85.82 C3.25 85.82 2.25 86.83 2.25 88.07 L2.25 94.8 C1.01 94.8 0 95.81 0 97.04 C0 98.29 1.01 99.29
+							 2.25 99.29 L2.25 106.03 C2.25 107.27 3.25 108.27 4.49 108.27 C5.73 108.27 6.74 107.27 6.74 106.03 L6.74
+							 88.07 C6.74 86.83 5.73 85.82 4.49 85.82 ZM83.08 94.8 L83.08 88.07 C83.08 86.83 82.07 85.82 80.83 85.82
+							 C79.59 85.82 78.59 86.83 78.59 88.07 L78.59 106.03 C78.59 107.27 79.59 108.27 80.83 108.27 C82.07 108.27
+							 83.08 107.27 83.08 106.03 L83.08 99.29 C84.32 99.29 85.32 98.29 85.32 97.04 C85.32 95.81 84.32 94.8
+							 83.08 94.8 Z" class="st6"/>
+			</g>
+			<g id="shape35-16" v:mID="35" v:groupContext="shape" transform="translate(26.9432,-13.4716)">
+				<title>工作表.35</title>
+				<path d="M29.19 101.54 C27.95 101.54 26.94 102.54 26.94 103.78 L4.49 103.78 C4.49 102.54 3.49 101.54 2.25 101.54
+							 C1.01 101.54 0 102.54 0 103.78 L0 106.03 C0 107.27 1.01 108.27 2.25 108.27 L29.19 108.27 C30.43 108.27
+							 31.44 107.27 31.44 106.03 L31.44 103.78 C31.44 102.54 30.43 101.54 29.19 101.54 Z" class="st7"/>
+			</g>
+		</g>
+	</g>
+</svg>
