@@ -243,7 +243,6 @@ class MultiAgentDataPrep:
                 raise ValueError(f'Unknown physical operator: {type}')
         return self.data
                 
-    
     def generate_physical_plan(self, data:TQAData, logical_plan:List[LogicalOperator], binder_sql):
         self.data = data
 
@@ -305,7 +304,6 @@ class MultiAgentDataPrep:
         physical_plan.append(('Filter', filter_physical_op))
 
         return physical_plan
-        
 
     def process(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
         self.data = data

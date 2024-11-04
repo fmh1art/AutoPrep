@@ -3,25 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <title>Upload Data</title>
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Previous styles remain the same */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-label {
+            display: inline-block;
+            width: 120px;
+            margin-right: 10px;
+        }
+        .error-message {
+            color: #dc3545;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+        .help-text {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container" style="position: relative;">
-        <form method="POST" enctype="multipart/form-data">
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" id="uploadForm">
             <h1><img src="../static/images/user.svg" style="width: 40px; height: 40px; margin-right: 5px;"> Upload the Table and Question</h1>
-            <!-- put these horizontally. set the space to 10px-->
-            <div class="form-group" style="display: flex; flex-direction: row;">
-                <input style="width: 30%;" type="file" class="form-control-file" name="file" required>
-                <input style="width: 70%;" type="text" name="question" placeholder="Enter your question" required>
+            
+            <div class="input-group">
+                <label class="input-label">Data Source:</label>
+                <label class="switch">
+                    <input type="checkbox" id="sourceSwitch" name="data_source">
+                    <span class="slider"></span>
+                </label>
+                <span style="margin-left: 10px;">Upload File / Data Lake</span>
             </div>
 
-            <form method="POST" action="/submit">
-                <button type="next" style="border: none; background: none; padding: 0; position: absolute; right: 20px; top: 20px;">
-                    <img src="{{ url_for('static', filename='../static/images/next.svg') }}" style="width: 40px; height: 40px;">
-                </button>
-            </form>
+            <div id="fileUploadSection" class="input-group">
+                <div style="display: flex; flex-direction: row;">
+                    <input style="width: 30%;" type="file" class="form-control-file" name="file" id="fileInput">
+                    <input style="width: 70%;" type="text" name="question" id="fileQuestion" placeholder="Enter your question">
+                </div>
+            </div>
+
+            <div id="dataLakeSection" style="display: none;" class="input-group">
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div>
+                        <label class="input-label">Dataset Path:</label>
+                        <input type="text" name="data_lake_url" id="dataLakeUrl" value="http://huggingface.co" style="width: 60%;">
+                        <div class="help-text">
+                            Enter huggingface url of the table data lake
+                        </div>
+                    </div>
+                    <div>
+                        <label class="input-label">Top-K Value:</label>
+                        <input type="number" name="top_k" value="1" min="1" style="width: 60px;">
+                        <div class="help-text">
+                            Number of rows to retrieve from the dataset
+                        </div>
+                    </div>
+                    <div>
+                        <label class="input-label">Question:</label>
+                        <input type="text" name="question_datalake" id="dataLakeQuestion" placeholder="Enter your question" style="width: 60%;">
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" style="border: none; background: none; padding: 0; position: absolute; right: 20px; top: 20px;">
+                <img src="{{ url_for('static', filename='../static/images/next.svg') }}" style="width: 40px; height: 40px;">
+            </button>
         </form>
     </div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const sourceSwitch = document.getElementById('sourceSwitch');
+        const fileSection = document.getElementById('fileUploadSection');
+        const dataLakeSection = document.getElementById('dataLakeSection');
+        const fileInput = document.getElementById('fileInput');
+        const fileQuestion = document.getElementById('fileQuestion');
+        const dataLakeUrl = document.getElementById('dataLakeUrl');
+        const dataLakeQuestion = document.getElementById('dataLakeQuestion');
+
+        function updateRequiredFields() {
+            if (sourceSwitch.checked) {
+                // Data Lake mode
+                fileInput.removeAttribute('required');
+                fileQuestion.removeAttribute('required');
+                dataLakeUrl.setAttribute('required', '');
+                dataLakeQuestion.setAttribute('required', '');
+            } else {
+                // File Upload mode
+                fileInput.setAttribute('required', '');
+                fileQuestion.setAttribute('required', '');
+                dataLakeUrl.removeAttribute('required');
+                dataLakeQuestion.removeAttribute('required');
+            }
+        }
+
+        sourceSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                fileSection.style.display = 'none';
+                dataLakeSection.style.display = 'block';
+            } else {
+                fileSection.style.display = 'block';
+                dataLakeSection.style.display = 'none';
+            }
+            updateRequiredFields();
+        });
+
+        // Set initial required fields
+        updateRequiredFields();
+
+        // Form validation
+        form.addEventListener('submit', function(event) {
+            if (sourceSwitch.checked) {
+                if (!dataLakeUrl.value || !dataLakeQuestion.value) {
+                    event.preventDefault();
+                    alert('Please fill in all required fields for Data Lake mode');
+                }
+            } else {
+                if (!fileInput.value || !fileQuestion.value) {
+                    event.preventDefault();
+                    alert('Please fill in all required fields for File Upload mode');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
