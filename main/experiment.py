@@ -305,11 +305,11 @@ class Experiment:
                 logger.log_message(msg=f'******************** #num: {len(processed_datas)}, id: {processed_data.id}, question: {processed_data.question}, len(self_corr_inses): {len(self_corr_inses)} ********************')
 
                 if save:
-                    if 'relcol_mapreq_bindersql' in log_info:
-                        binder_result_dic = log_info['relcol_mapreq_bindersql']
-                        log_info.pop('relcol_mapreq_bindersql')
+                    if 'relcol_mapreq_ansketchsql' in log_info:
+                        ansketch_result_dic = log_info['relcol_mapreq_ansketchsql']
+                        log_info.pop('relcol_mapreq_ansketchsql')
                         if processed_data.id not in mul_dp_temp_data:
-                            mul_dp_temp_data[processed_data.id] = binder_result_dic
+                            mul_dp_temp_data[processed_data.id] = ansketch_result_dic
                             with open(GV.MULTIA_TEMP_DATA_PATH, 'wb') as f:
                                 pkl.dump(mul_dp_temp_data, f)
                     # Save as pkl

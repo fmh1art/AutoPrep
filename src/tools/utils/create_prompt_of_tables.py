@@ -133,7 +133,7 @@ def _float_is_int(df: pd.DataFrame, col):
             tol += 1
     return float(is_int) / (tol+1e-6) > GV.TYPE_DEDUCE_RATIO
 
-def binder_nl2sql_prompt(data:TQAData, cut_line=GV.DEFAULT_ROW_CUT, specify_line=False):
+def ansketch_nl2sql_prompt(data:TQAData, cut_line=GV.DEFAULT_ROW_CUT, specify_line=False):
 
     col_and_type = []
     for col in data.tbl.columns:

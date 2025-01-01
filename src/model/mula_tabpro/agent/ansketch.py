@@ -1,7 +1,7 @@
 from .simple_agent import *
 import sqlite3
 
-class Binder(Agent):
+class Ansketch(Agent):
     def __init__(self, llm_name='gpt-3.5-turbo-0301', chains: List = [InitOP()], PROMPT = None, agent_name='binder', logger_root='tmp/table_llm_log', logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log'):
         super().__init__(llm_name=llm_name, chains=chains, PROMPT=PROMPT, agent_name=agent_name, logger_root=logger_root, logger_file=logger_file)
         self.conn = sqlite3.connect(':memory:')
@@ -35,7 +35,7 @@ class Binder(Agent):
             )
             self.last_log = None
         
-        _, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+        _, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
         self.icl_inses.append(
             self.get_icl_inses(
                 out, 
@@ -102,12 +102,12 @@ class Binder(Agent):
         prompt = ''
         for row_lim in range(row_len, 0, -2):
             demo = copy.deepcopy(DEMO_BINDER)
-            create_table, table_ret = binder_nl2sql_prompt(data, cut_line=row_lim)
+            create_table, table_ret = ansketch_nl2sql_prompt(data, cut_line=row_lim)
             query = QUERY_BINDER.format(create_table_text=create_table, table=table_ret, question=question, title=data.title)
 
             if self.retrieve_demo and instance_pool is not None:
                 # update demo for self-correction
-                create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+                create_table_tmp, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
                 ret_ins = instance_pool.retrieve(
                     get_instance(id = data.id,
                                  create_table=create_table_tmp,
@@ -144,7 +144,7 @@ class Binder(Agent):
                 # update demo
                 if instance_pool is not None:
                     # update demo for self-correction
-                    create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+                    create_table_tmp, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
                     ret_ins = instance_pool.retrieve(
                         get_instance(id = data.id,
                                      create_table=create_table_tmp,
@@ -173,7 +173,7 @@ class Binder(Agent):
 
             prompt = demo + '\n\n' + query
             if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
-                create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+                create_table_tmp, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
 
                 self.cur_ins = get_instance(
                     id = data.id, create_table=create_table_tmp, 

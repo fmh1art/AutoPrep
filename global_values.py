@@ -212,7 +212,7 @@ SELF_CORRECTION_NUM = 1 if SELF_CORRECTION else 0
 RETRIEVE_DEMO = False
 RETRIEVE_DEMO_NUM = 20 if RETRIEVE_DEMO else 0
 
-AGENTS = ['nl2sqler', 'view_generator', 'cleaner', 'coltype_deducer', 'binder', 'imputater']
+AGENTS = ['nl2sqler', 'view_generator', 'cleaner', 'coltype_deducer', 'ansketch', 'imputater']
 # LLM_NAME = 'gpt-3.5-turbo-0613'
 # LLM_NAME = 'o1-preview-2024-09-12'
 # LLM_NAME = 'gpt-4'

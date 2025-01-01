@@ -3,7 +3,7 @@ import json
 import records
 from typing import List, Dict
 from sqlalchemy.exc import SQLAlchemyError
-from binder_evaluator.sql.all_keywords import ALL_KEY_WORDS
+from global_values import ALL_KEY_WORDS
 
 
 class WTQDBEngine:
@@ -118,24 +118,3 @@ def retrieve_wtq_query_answer(_engine, _table_content, _sql_struct: List):
     if "none" in _norm_sql_answers:
         _norm_sql_answers = []
     return _encode_sql_str, _norm_sql_answers, _exec_sql_str
-
-
-def _load_table_w_page(table_path, page_title_path=None) -> dict:
-    """
-    attention: the table_path must be the .tsv path.
-    Load the WikiTableQuestion from csv file. Result in a dict format like:
-    {"header": [header1, header2,...], "rows": [[row11, row12, ...], [row21,...]... [...rownm]]}
-    """
-
-    from binder_evaluator.utils import _load_table
-
-    table_item = _load_table(table_path)
-
-    # Load page title
-    if not page_title_path:
-        page_title_path = table_path.replace("csv", "page").replace(".tsv", ".json")
-    with open(page_title_path, "r") as f:
-        page_title = json.load(f)['title']
-    table_item['page_title'] = page_title
-
-    return table_item

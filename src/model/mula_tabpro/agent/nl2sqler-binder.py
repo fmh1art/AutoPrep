@@ -36,7 +36,7 @@ class NL2SQLer(Agent):
         row_len = len(tbl)
         prompt = ''
         for row_lim in range(row_len, 0, -2):
-            create_table, table_ret = binder_nl2sql_prompt(data, cut_line=row_lim)
+            create_table, table_ret = ansketch_nl2sql_prompt(data, cut_line=row_lim)
             query = QUERY_NL2SQLER.format(create_table_text=create_table, table=table_ret, question=question)
             prompt = demo + '\n\n' + query
             if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:

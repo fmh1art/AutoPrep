@@ -80,12 +80,12 @@ class DirectPromptingManager(Agent):
         prompt = ''
         for row_lim in range(row_len, 0, -2):
             demo = copy.deepcopy(DEMO_MANAGER)
-            _, table_ret = binder_nl2sql_prompt(data, cut_line=row_lim)
+            _, table_ret = ansketch_nl2sql_prompt(data, cut_line=row_lim)
             query = QUERY_MANAGER.format(table=table_ret, question=question, title=data.title)
 
             if self.retrieve_demo and instance_pool is not None:
                 # update demo for self-correction
-                _, table_tmp = binder_nl2sql_prompt(data, cut_line=3)
+                _, table_tmp = ansketch_nl2sql_prompt(data, cut_line=3)
                 ret_ins = instance_pool.retrieve(
                     get_instance(
                         id = data.id, title=data.title, table=table_tmp, q=question, type=f'{self.name}-in_context_learning'),
@@ -109,7 +109,7 @@ class DirectPromptingManager(Agent):
                 # update demo
                 if instance_pool is not None:
                     # update demo for self-correction
-                    _, table_tmp = binder_nl2sql_prompt(data, cut_line=3)
+                    _, table_tmp = ansketch_nl2sql_prompt(data, cut_line=3)
                     ret_ins = instance_pool.retrieve(
                         get_instance(
                             id = data.id, title=data.title, table=table_tmp, q=question, 
@@ -127,7 +127,7 @@ class DirectPromptingManager(Agent):
             prompt = demo + '\n\n' + query
 
             if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
-                _, table_tmp = binder_nl2sql_prompt(data, cut_line=3)
+                _, table_tmp = ansketch_nl2sql_prompt(data, cut_line=3)
                 self.cur_ins = get_instance(id = data.id, title=data.title, table=table_tmp, q=question)
                 break
             

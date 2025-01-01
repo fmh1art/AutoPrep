@@ -38,7 +38,7 @@ class NL2SQLer(Agent):
             )
             self.last_log = None
         
-        _, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+        _, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
         self.icl_inses.append(
             self.get_icl_inses(
                 out, 
@@ -63,11 +63,11 @@ class NL2SQLer(Agent):
         prompt = ''
         for row_lim in range(row_len, 0, -2):
             demo = copy.deepcopy(DEMO_NL2SQLER)
-            create_table, table_ret = binder_nl2sql_prompt(data, cut_line=row_lim)
+            create_table, table_ret = ansketch_nl2sql_prompt(data, cut_line=row_lim)
             query = QUERY_NL2SQLER.format(create_table_text=create_table, table=table_ret, question=question, title=title)
 
             if self.retrieve_demo and instance_pool is not None:
-                create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+                create_table_tmp, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
                 ret_ins = instance_pool.retrieve(
                     get_instance(id = data.id,
                                  create_table=create_table_tmp,
@@ -101,7 +101,7 @@ class NL2SQLer(Agent):
                 query = query.replace('SQL:', 'Last Error: ' + self.last_log + '\n' + 'SQL:')
 
                 if instance_pool is not None:
-                    create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+                    create_table_tmp, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
                     ret_ins = instance_pool.retrieve(
                             get_instance(id = data.id,
                                         create_table=create_table_tmp,
@@ -131,7 +131,7 @@ class NL2SQLer(Agent):
             
             prompt = demo + '\n\n' + query
             if cal_tokens(prompt) <= GV.MAX_INPUT_LIMIT-GV.MAX_OUTPUT_LIMIT:
-                create_table_tmp, table_ret_tmp = binder_nl2sql_prompt(data, cut_line=3, specify_line=True)
+                create_table_tmp, table_ret_tmp = ansketch_nl2sql_prompt(data, cut_line=3, specify_line=True)
                 self.cur_ins = get_instance(
                     id = data.id, create_table=create_table_tmp, 
                     title=data.title, table=table_ret_tmp, question=question

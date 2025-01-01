@@ -6,7 +6,7 @@ from src.tools.utils import *
 import global_values as GV
 from src.tools.logger import Logger
 from src.data import TQAData
-from src.model.mula_tabpro.agent import Binder, ViewGenerator, Imputater, ColTypeDeducer, Cleaner, Coder
+from src.model.mula_tabpro.agent import Ansketch, ViewGenerator, Imputater, ColTypeDeducer, Cleaner, Coder
 from src.model.mula_tabpro.operator import FilterColumns, SimpleOperator
 
 class LogicalOperator:
@@ -36,7 +36,7 @@ class MultiAgentDataPrep:
                  logger_file=f'mula_tabpro_v{GV.TABLELLM_VERSION}.log', 
                  temp_data_path = GV.MULTIA_TEMP_DATA_PATH):
         self.llm_name = llm_name
-        self.binder = Binder(llm_name=GV.LLM_DICT['binder'], logger_root=logger_root, logger_file=logger_file)
+        self.ansketch = Ansketch(llm_name=GV.LLM_DICT['ansketch'], logger_root=logger_root, logger_file=logger_file)
         self.view_gen = ViewGenerator(llm_name=GV.LLM_DICT['view_generator'], logger_root=logger_root, logger_file=logger_file)
         self.imputater = Imputater(llm_name=GV.LLM_DICT['imputater'], logger_root=logger_root, logger_file=logger_file)
         self.coltype_deducer = ColTypeDeducer(llm_name=GV.LLM_DICT['coltype_deducer'], logger_root=logger_root, logger_file=logger_file)
@@ -48,34 +48,34 @@ class MultiAgentDataPrep:
         self.self_corr_inses = []
         self.icl_inses = []
 
-        self.temp_relcol_mapreq_bindersql = {}
+        self.temp_relcol_mapreq_ansketchsql = {}
         if os.path.exists(self.temp_data_path):
             try:
-                self.temp_relcol_mapreq_bindersql = pkl.load(open(self.temp_data_path, 'rb'))
-                self.logger.log_message(msg=f'I: Load temp data from {self.temp_data_path}, {len(self.temp_relcol_mapreq_bindersql)} records loaded.')
+                self.temp_relcol_mapreq_ansketchsql = pkl.load(open(self.temp_data_path, 'rb'))
+                self.logger.log_message(msg=f'I: Load temp data from {self.temp_data_path}, {len(self.temp_relcol_mapreq_ansketchsql)} records loaded.')
             except Exception as e:
-                self.temp_relcol_mapreq_bindersql = {}
+                self.temp_relcol_mapreq_ansketchsql = {}
                 self.logger.log_message(level='error', msg=f'E: Error raised in loading temp data: {e}')
 
-    def _generate_related_cols_and_mapping_requirements(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, binder_vote_cnt=1, load_from_temp=True):
-        #? Generate multiple binder_sql, then select the union for related_column, and update the mapping requirements
+    def _generate_related_cols_and_mapping_requirements(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, ansketch_vote_cnt=1, load_from_temp=True):
+        #? Generate multiple ansketch_sql, then select the union for related_column, and update the mapping requirements
         #? Update rules: select the mapping requirements with shorter length.
         #* add function that allow to load temp data from disk
-        if load_from_temp and data.id in self.temp_relcol_mapreq_bindersql:
-            tar_dic = self.temp_relcol_mapreq_bindersql[data.id]
+        if load_from_temp and data.id in self.temp_relcol_mapreq_ansketchsql:
+            tar_dic = self.temp_relcol_mapreq_ansketchsql[data.id]
             self.logger.log_message(msg=f'/*************** Return temp data for {data.id} ***************/')
-            return tar_dic['related_columns'], tar_dic['mapping_requirements'], tar_dic['binder_sqls']
+            return tar_dic['related_columns'], tar_dic['mapping_requirements'], tar_dic['ansketch_sqls']
 
         related_columns = []
         mapping_requirements = None
         sql_with_mp = None
-        binder_sqls = []
-        for _ in range(binder_vote_cnt):
-            post_sql, rel_cols, map_requires = self.binder.process(data, instance_pool)
+        ansketch_sqls = []
+        for _ in range(ansketch_vote_cnt):
+            post_sql, rel_cols, map_requires = self.ansketch.process(data, instance_pool)
             if len(rel_cols) == 0:
                 rel_cols = list(data.tbl.columns)
 
-            binder_sqls.append(post_sql)
+            ansketch_sqls.append(post_sql)
             related_columns = list(set(related_columns + rel_cols))
 
             if mapping_requirements is None:
@@ -88,13 +88,13 @@ class MultiAgentDataPrep:
         if GEN_COL_FLAG:
             related_columns = self._update_related_cols(related_columns, mapping_requirements, sql_with_mp)
 
-        return related_columns, mapping_requirements, binder_sqls
+        return related_columns, mapping_requirements, ansketch_sqls
 
-    def _get_coltype_dict(self, data:TQAData, related_columns:List[str], binder_sql:str, coltype_vote=3, instance_pool=None):
+    def _get_coltype_dict(self, data:TQAData, related_columns:List[str], ansketch_sql:str, coltype_vote=3, instance_pool=None):
         coltype_dict = {}
         for _ in range(coltype_vote):
             try:
-                colty_dic = self.coltype_deducer.process(data, related_columns, binder_sql, instance_pool)
+                colty_dic = self.coltype_deducer.process(data, related_columns, ansketch_sql, instance_pool)
             except:
                 continue
             for col, ctype in colty_dic.items():
@@ -108,7 +108,7 @@ class MultiAgentDataPrep:
     def _get_requires_with_direct_prompting(data: TQAData):
         pass
     
-    def process_process_table_with_code(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
+    def process_process_table_with_code(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, ansketch_vote_cnt=1, coltype_vote=1):
         self.data = data
         self.log_info = {}
         self.self_corr_inses = []
@@ -117,16 +117,16 @@ class MultiAgentDataPrep:
             
         origin_cols = list(self.data.tbl.columns)
 
-        # 1. get the binder program: extract the [related columns] and the [mapping requirement(s)]
-        related_columns, mapping_requirements, binder_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, binder_vote_cnt=binder_vote_cnt)
+        # 1. get the ansketch program: extract the [related columns] and the [mapping requirement(s)]
+        related_columns, mapping_requirements, ansketch_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, ansketch_vote_cnt=ansketch_vote_cnt)
         related_columns = sorted([x for x in related_columns if x in origin_cols], key=lambda x: origin_cols.index(x))
-        self.log_info['relcol_mapreq_bindersql'] = {'related_columns': related_columns, 'mapping_requirements': mapping_requirements, 'binder_sqls': binder_sqls}
-        self.logger.log_message(msg=f'/*************** {self.log_info["relcol_mapreq_bindersql"]} ***************/')
+        self.log_info['relcol_mapreq_ansketchsql'] = {'related_columns': related_columns, 'mapping_requirements': mapping_requirements, 'ansketch_sqls': ansketch_sqls}
+        self.logger.log_message(msg=f'/*************** {self.log_info["relcol_mapreq_ansketchsql"]} ***************/')
         self.log_info['related_columns'] = related_columns
 
         # -- [G] update related_columns if some columns only exist in the mapping requirements
         # -- update log_info
-        self.log_info['binder_sql'] = binder_sqls
+        self.log_info['ansketch_sql'] = ansketch_sqls
         self.log_info['mapping_requirements'] = mapping_requirements
 
         self.log_info[f'col_gen'] = []
@@ -157,7 +157,7 @@ class MultiAgentDataPrep:
         if CLEAN_FLAG: #!
             # 3. [C] standardize the columns
             # -> 3.1. [C] deduce the types of all related columns
-            coltype_dict = self._get_coltype_dict(self.data, related_columns, binder_sqls[-1], coltype_vote, instance_pool)
+            coltype_dict = self._get_coltype_dict(self.data, related_columns, ansketch_sqls[-1], coltype_vote, instance_pool)
 
             # -- [C] update log_info
             self.log_info['coltype_dict'] = coltype_dict
@@ -191,7 +191,7 @@ class MultiAgentDataPrep:
 
         return self.data, self.log_info
     
-    def generate_logical_plan(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
+    def generate_logical_plan(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, ansketch_vote_cnt=1, coltype_vote=1):
         logical_plan = []
         self.data = data
         self.log_info = {}
@@ -201,21 +201,21 @@ class MultiAgentDataPrep:
 
         origin_cols = list(self.data.tbl.columns)
 
-        # 1. get the binder program: extract the [related columns] and the [mapping requirement(s)]
-        related_columns, mapping_requirements, binder_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, binder_vote_cnt=binder_vote_cnt)
+        # 1. get the ansketch program: extract the [related columns] and the [mapping requirement(s)]
+        related_columns, mapping_requirements, ansketch_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, ansketch_vote_cnt=ansketch_vote_cnt)
         related_columns = sorted([x for x in related_columns if x in origin_cols], key=lambda x: origin_cols.index(x))
         
         for requirement, cols in mapping_requirements:
             logical_plan.append(Augment(req=requirement, rel_cols=list(cols)))
 
-        coltype_dict = self._get_coltype_dict(self.data, related_columns, binder_sqls[-1], coltype_vote, instance_pool)
+        coltype_dict = self._get_coltype_dict(self.data, related_columns, ansketch_sqls[-1], coltype_vote, instance_pool)
         for col, ctype in coltype_dict.items():
             if ctype in ['datetime', 'numerical']:
                 logical_plan.append(Normalize(req=f'Cast to {ctype} type.', col=col))
 
         logical_plan.append(Filter(rel_cols=related_columns))
         
-        return logical_plan, binder_sqls[-1]
+        return logical_plan, ansketch_sqls[-1]
     
     def execute_physical_plan(self, data:TQAData, physical_plan:List[SimpleOperator]):
         self.data = data
@@ -244,7 +244,7 @@ class MultiAgentDataPrep:
         return self.data
                 
     
-    def generate_physical_plan(self, data:TQAData, logical_plan:List[LogicalOperator], binder_sql):
+    def generate_physical_plan(self, data:TQAData, logical_plan:List[LogicalOperator], ansketch_sql):
         self.data = data
 
         physical_plan = []
@@ -270,7 +270,7 @@ class MultiAgentDataPrep:
                         physic_op = self.view_gen.get_physical_op(self.data, cols, req)
                         physic_op.req = req
                         physical_plan.append((logic_op.type, physic_op))
-                        # self.data = self.imputater.col_generate_imputate(self.data, physic_op, binder_sql)
+                        # self.data = self.imputater.col_generate_imputate(self.data, physic_op, ansketch_sql)
                         new_col = physic_op.args['new_column']
                         if new_col not in filter_op.rel_cols:
                             new_gened_cols.append(new_col)
@@ -287,7 +287,7 @@ class MultiAgentDataPrep:
                         # self.data, physic_op = self.cleaner.standardize_coltype(self.data, col, ctype)
                         physic_op = self.cleaner.get_physical_op(self.data, col, ctype)
                         physical_plan.append((logic_op.type, physic_op))
-                        # self.data = self.imputater.standardize_imputate(self.data, col, ctype, sql=binder_sql)
+                        # self.data = self.imputater.standardize_imputate(self.data, col, ctype, sql=ansketch_sql)
                     except Exception as e:
                         self.logger.log_message(level='error', msg=f'E: Error raised in standardizing column: {e}')
                         continue
@@ -307,7 +307,7 @@ class MultiAgentDataPrep:
         return physical_plan
         
 
-    def process(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, binder_vote_cnt=1, coltype_vote=1):
+    def process(self, data:TQAData, instance_pool=None, GEN_COL_FLAG=True, CLEAN_FLAG=True, IMPUTATE_FLAG=True, ansketch_vote_cnt=1, coltype_vote=1):
         self.data = data
         self.log_info = {}
         self.self_corr_inses = []
@@ -316,16 +316,16 @@ class MultiAgentDataPrep:
 
         origin_cols = list(self.data.tbl.columns)
 
-        # 1. get the binder program: extract the [related columns] and the [mapping requirement(s)]
-        related_columns, mapping_requirements, binder_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, binder_vote_cnt=binder_vote_cnt)
+        # 1. get the ansketch program: extract the [related columns] and the [mapping requirement(s)]
+        related_columns, mapping_requirements, ansketch_sqls = self._generate_related_cols_and_mapping_requirements(data=data, instance_pool=instance_pool, GEN_COL_FLAG=GEN_COL_FLAG, ansketch_vote_cnt=ansketch_vote_cnt)
         related_columns = sorted([x for x in related_columns if x in origin_cols], key=lambda x: origin_cols.index(x))
-        self.log_info['relcol_mapreq_bindersql'] = {'related_columns': related_columns, 'mapping_requirements': mapping_requirements, 'binder_sqls': binder_sqls}
-        self.logger.log_message(msg=f'/*************** {self.log_info["relcol_mapreq_bindersql"]} ***************/')
+        self.log_info['relcol_mapreq_ansketchsql'] = {'related_columns': related_columns, 'mapping_requirements': mapping_requirements, 'ansketch_sqls': ansketch_sqls}
+        self.logger.log_message(msg=f'/*************** {self.log_info["relcol_mapreq_ansketchsql"]} ***************/')
         self.log_info['related_columns'] = related_columns
 
         # -- [G] update related_columns if some columns only exist in the mapping requirements
         # -- update log_info
-        self.log_info['binder_sql'] = binder_sqls
+        self.log_info['ansketch_sql'] = ansketch_sqls
         self.log_info['mapping_requirements'] = mapping_requirements
 
         self.log_info[f'col_gen'] = []
@@ -339,7 +339,7 @@ class MultiAgentDataPrep:
                     # -> 2.2. [GI] impute the ungenerated value(s) of the GEN_NEW_COL operator
                     
                     if IMPUTATE_FLAG: #!
-                        self.data = self.imputater.col_generate_imputate(self.data, op, binder_sqls[-1], instance_pool)
+                        self.data = self.imputater.col_generate_imputate(self.data, op, ansketch_sqls[-1], instance_pool)
                     # -> 2.3. [G] update the related columns
                     new_col = op.args['new_column']
                     if new_col not in related_columns:
@@ -365,7 +365,7 @@ class MultiAgentDataPrep:
         if CLEAN_FLAG: #!
             # 3. [C] standardize the columns
             # -> 3.1. [C] deduce the types of all related columns
-            coltype_dict = self._get_coltype_dict(self.data, related_columns, binder_sqls[-1], coltype_vote, instance_pool)
+            coltype_dict = self._get_coltype_dict(self.data, related_columns, ansketch_sqls[-1], coltype_vote, instance_pool)
 
             # -- [C] update log_info
             self.log_info['coltype_dict'] = coltype_dict
@@ -379,7 +379,7 @@ class MultiAgentDataPrep:
                         self.data, op = self.cleaner.standardize_coltype(self.data, col, ctype, instance_pool)
                         # -> 3.3. [CI] impute the unstandardized value(s)
                         if IMPUTATE_FLAG: #!
-                            self.data = self.imputater.standardize_imputate(origin_data, self.data, col, ctype, sql=binder_sqls[-1], instance_pool=instance_pool)
+                            self.data = self.imputater.standardize_imputate(origin_data, self.data, col, ctype, sql=ansketch_sqls[-1], instance_pool=instance_pool)
                         # -- [C] update log_info
                         self.log_info['standardize'].append({'col': col, 'ctype': ctype})
                         if op.type != 'empty_operator':
@@ -394,8 +394,8 @@ class MultiAgentDataPrep:
         if len(related_columns) != 0 and GV.EXT_REL_COL:
             self.data.tbl = self.data.tbl[related_columns]
 
-        self.self_corr_inses = self.binder.self_corr_inses + self.view_gen.self_corr_inses + self.imputater.self_corr_inses + self.coltype_deducer.self_corr_inses + self.cleaner.self_corr_inses
-        self.icl_inses = self.binder.icl_inses + self.view_gen.icl_inses + self.imputater.icl_inses + self.coltype_deducer.icl_inses + self.cleaner.icl_inses
+        self.self_corr_inses = self.ansketch.self_corr_inses + self.view_gen.self_corr_inses + self.imputater.self_corr_inses + self.coltype_deducer.self_corr_inses + self.cleaner.self_corr_inses
+        self.icl_inses = self.ansketch.icl_inses + self.view_gen.icl_inses + self.imputater.icl_inses + self.coltype_deducer.icl_inses + self.cleaner.icl_inses
 
         return self.data, self.log_info
 
