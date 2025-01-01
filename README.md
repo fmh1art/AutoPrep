@@ -26,6 +26,6 @@ pip install -r requirements.txt
 ### Buildup Steps
 
 1. The dataset we use can be downloaded from [WikiTQ](https://github.com/ppasupat/WikiTableQuestions) and [TabFact](https://github.com/wenhuchen/Table-Fact-Checking)
-2. Modify the `DATA_PATH` in [GV.py](./src/GV.py) to the root path of your downloaded datasets.
+2. Modify the `DATA_PATH` in [global_values.py](./global_values.py) to the root path of your downloaded datasets.
 3. create a key file named `keys.txt` in the root and put your api keys in it (each key for one line)
 4. run `python main/experiment.py`.
